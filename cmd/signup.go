@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/spf13/cobra"
 )
 
@@ -13,12 +12,11 @@ var signupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		signupEmail, _ := cmd.Flags().GetString("email")
 		signupPassword, _ := cmd.Flags().GetString("password")
-		signupAccountName, _ := cmd.Flags().GetString("full name")
-		signupFullName, _ := cmd.Flags().GetString("account name")
-		fmt.Println(signupEmail)
-		fmt.Println(signupPassword)
-		fmt.Println(signupFullName)
-		fmt.Println(signupAccountName)
+		signupFullName, _ := cmd.Flags().GetString("full name")
+		signupAccountName, _ := cmd.Flags().GetString("account name")
+
+		signupCredentials := [4]string{signupEmail, signupPassword, signupFullName, signupAccountName}
+		mysql.InsertSignupData(signupCredentials)
 	},
 }
 
