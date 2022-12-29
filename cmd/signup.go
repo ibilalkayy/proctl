@@ -1,9 +1,28 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
+	"log"
+	"regexp"
+
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/spf13/cobra"
+	"golang.org/x/crypto/bcrypt"
 )
+
+func emailValid(email string) bool {
+	regexEmail := regexp.MustCompile(`^[a-zA-Z0-9-_]+@[a-z]+\.[a-z]{1,3}$`)
+	return regexEmail.MatchString(email)
+}
+
+func HashPassword(value []byte) string {
+	hash, err := bcrypt.GenerateFromPassword(value, bcrypt.MinCost)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(hash)
+}
 
 // signupCmd represents the signup command
 var signupCmd = &cobra.Command{
@@ -14,9 +33,15 @@ var signupCmd = &cobra.Command{
 		signupPassword, _ := cmd.Flags().GetString("password")
 		signupFullName, _ := cmd.Flags().GetString("full name")
 		signupAccountName, _ := cmd.Flags().GetString("account name")
+		hashPass := HashPassword([]byte(signupPassword))
 
-		signupCredentials := [4]string{signupEmail, signupPassword, signupFullName, signupAccountName}
-		mysql.InsertSignupData(signupCredentials)
+		if len(signupEmail) != 0 && emailValid(signupEmail) && len(signupPassword) != 0 && len(signupFullName) != 0 && len(signupAccountName) != 0 {
+			signupCredentials := [4]string{signupEmail, hashPass, signupFullName, signupAccountName}
+			mysql.InsertSignupData(signupCredentials)
+			fmt.Println("Your account is successfully created")
+		} else {
+			fmt.Println(errors.New("Give the correct or full credentials"))
+		}
 	},
 }
 
