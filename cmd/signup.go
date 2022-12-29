@@ -38,7 +38,7 @@ var signupCmd = &cobra.Command{
 		if len(signupEmail) != 0 && emailValid(signupEmail) && len(signupPassword) != 0 && len(signupFullName) != 0 && len(signupAccountName) != 0 {
 			signupCredentials := [4]string{signupEmail, hashPass, signupFullName, signupAccountName}
 			mysql.InsertSignupData(signupCredentials)
-			fmt.Println("Your account is successfully created")
+			fmt.Println("Your account is successfully created.")
 		} else {
 			fmt.Println(errors.New("Give the correct or full credentials"))
 		}
