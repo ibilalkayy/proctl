@@ -45,6 +45,7 @@ var signupCmd = &cobra.Command{
 			if jwtTokenGenerated {
 				redis.SetCredentials(signupEmail, hashPass)
 				redis.SetToken("LoginToken", tokenString)
+				fmt.Println("You have successfully created an account.")
 			} else {
 				fmt.Println("Signup failure.")
 			}
