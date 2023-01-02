@@ -28,20 +28,26 @@ var loginCmd = &cobra.Command{
 		loginEmail, _ := cmd.Flags().GetString("email")
 		loginPassword, _ := cmd.Flags().GetString("password")
 
-		redisSignupEmail, redisSignupPassword, redisSignupFound := redis.GetCredentials()
-		tokenString, jwtTokenGenerated := jwt.GenerateJWT()
-		for i := 0; i < 2; i++ {
-			mysqlEmail, mysqlPassword, mysqlFound := mysql.FindAccount(loginEmail, redisSignupPassword[i])
-			for ComparePasswords(redisSignupPassword[i], []byte(loginPassword)) && ComparePasswords(mysqlPassword, []byte(loginPassword)) {
-				if redisSignupFound && jwtTokenGenerated && mysqlFound && loginEmail == mysqlEmail && loginEmail == redisSignupEmail[i] {
-					redis.SetToken("LoginToken", tokenString)
-					fmt.Println("You're successfully logged in")
-					break
-				} else {
-					fmt.Println(errors.New("invalid or no credentials: try out again"))
-					break
+		loginToken := redis.GetToken("LoginToken")
+		if len(loginToken) == 0 {
+			redisSignupEmail, redisSignupPassword, redisSignupFound := redis.GetCredentials()
+			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
+			totalColumns := mysql.CountTableColumns("Signup")
+			for i := 0; i < totalColumns; i++ {
+				mysqlEmail, mysqlPassword, mysqlFound := mysql.FindAccount(loginEmail, redisSignupPassword[i])
+				for ComparePasswords(redisSignupPassword[i], []byte(loginPassword)) && ComparePasswords(mysqlPassword, []byte(loginPassword)) {
+					if redisSignupFound && jwtTokenGenerated && mysqlFound && loginEmail == mysqlEmail && loginEmail == redisSignupEmail[i] {
+						redis.SetToken("LoginToken", tokenString)
+						fmt.Println("You're successfully logged in.")
+						break
+					} else {
+						fmt.Println(errors.New("invalid or no credentials: try out again."))
+						break
+					}
 				}
 			}
+		} else {
+			fmt.Println(errors.New("You're already logged in."))
 		}
 	},
 }
