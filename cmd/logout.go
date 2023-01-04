@@ -15,7 +15,7 @@ var logoutCmd = &cobra.Command{
 	Use:   "logout",
 	Short: "Confirm it to logout",
 	Run: func(cmd *cobra.Command, args []string) {
-		loginToken := redis.GetToken("LoginToken")
+		loginToken := redis.GetAccountInfo("LoginToken")
 		if len(loginToken) != 0 {
 			fmt.Printf("Want to logout [y/n]: ")
 			fmt.Scanln(&choice)

@@ -8,8 +8,8 @@ import (
 	"github.com/go-redis/redis"
 )
 
-type NewToken struct {
-	MyToken string
+type MyInfo struct {
+	MyKey string
 }
 
 func RedisConnect() *redis.Client {
@@ -22,20 +22,22 @@ func RedisConnect() *redis.Client {
 	return client
 }
 
-func SetCredentials(email, password string) {
+func SetCredentials(email, password, accountName string) {
 	client := RedisConnect()
 	insertEmails, err := client.LPush("Emails", email).Result()
 	insertPasswords, err := client.LPush("Passwords", password).Result()
+	insertAccountName, err := client.LPush("Account Names", accountName).Result()
 
 	if err != nil {
 		fmt.Println(insertEmails)
 		fmt.Println(insertPasswords)
+		fmt.Println(insertAccountName)
 	}
 }
 
-func SetToken(id, tokenString string) {
+func SetAccountInfo(id, MyValue string) {
 	client := RedisConnect()
-	json, err := json.Marshal(NewToken{MyToken: tokenString})
+	json, err := json.Marshal(MyInfo{MyKey: MyValue})
 	if err != nil {
 		log.Fatal(err)
 	}

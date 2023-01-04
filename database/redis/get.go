@@ -1,36 +1,37 @@
 package redis
 
 import (
-	"regexp"
+	"encoding/json"
 
 	"github.com/ibilalkayy/proctl/database/mysql"
 )
 
-func GetCredentials() ([]string, []string, bool) {
+func GetCredentials() ([]string, []string, []string, bool) {
 	client := RedisConnect()
 	totalColumns := mysql.CountTableColumns("Signup")
-	getEmails, err := client.LRange("Emails", 0, int64(totalColumns)).Result()
-	getPasswords, err := client.LRange("Passwords", 0, int64(totalColumns)).Result()
+	getEmails, err := client.LRange("Emails", 0, int64(totalColumns)-1).Result()
+	getPasswords, err := client.LRange("Passwords", 0, int64(totalColumns)-1).Result()
+	getAccountName, err := client.LRange("Account Names", 0, int64(totalColumns)-1).Result()
 
 	if err != nil {
-		return []string{}, []string{}, false
+		return []string{}, []string{}, []string{}, false
 	}
 
-	return getEmails, getPasswords, true
+	return getEmails, getPasswords, getAccountName, true
 }
 
-func GetToken(id string) string {
+func GetAccountInfo(id string) string {
 	client := RedisConnect()
 	val, err := client.Get(id).Result()
 	if err != nil {
 		return ""
 	}
 
-	re, err := regexp.Compile(`.*"|".*`)
+	cred := MyInfo{}
+	err = json.Unmarshal([]byte(val), &cred)
 	if err != nil {
 		return ""
 	}
 
-	value := re.ReplaceAllString(val, "")
-	return value
+	return cred.MyKey
 }

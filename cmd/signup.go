@@ -37,7 +37,7 @@ var signupCmd = &cobra.Command{
 		signupAccountName, _ := cmd.Flags().GetString("account name")
 		hashPass := HashPassword([]byte(signupPassword))
 
-		loginToken := redis.GetToken("LoginToken")
+		loginToken := redis.GetAccountInfo("LoginToken")
 		if len(loginToken) == 0 {
 			if len(signupEmail) != 0 && emailValid(signupEmail) && len(signupPassword) != 0 && len(signupFullName) != 0 && len(signupAccountName) != 0 {
 				signupCredentials := [4]string{signupEmail, hashPass, signupFullName, signupAccountName}
@@ -45,8 +45,10 @@ var signupCmd = &cobra.Command{
 
 				tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 				if jwtTokenGenerated {
-					redis.SetCredentials(signupEmail, hashPass)
-					redis.SetToken("LoginToken", tokenString)
+					redis.SetCredentials(signupEmail, hashPass, signupAccountName)
+					_, _, redisSignupAccountName, _ := redis.GetCredentials()
+					redis.SetAccountInfo("LoginToken", tokenString)
+					redis.SetAccountInfo("AccountName", redisSignupAccountName[0])
 					fmt.Println("You have successfully created an account.")
 				} else {
 					fmt.Println("Signup failure.")
