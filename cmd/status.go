@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ibilalkayy/proctl/database/redis"
+	"github.com/ibilalkayy/proctl/jwt"
 	"github.com/spf13/cobra"
 )
 
@@ -13,9 +14,10 @@ var statusCmd = &cobra.Command{
 	Short: "Status of the logged in or the logged out user.",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) != 0 {
+		if len(loginToken) != 0 && jwt.RefreshToken() {
 			accountName := redis.GetAccountInfo("AccountName")
 			fmt.Printf("%s is logged in.\n", accountName)
+			fmt.Println(loginToken)
 		} else {
 			fmt.Println("User is logged out.")
 		}

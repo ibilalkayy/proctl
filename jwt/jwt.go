@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/middleware"
 )
 
 func GenerateJWT() (string, bool) {
-	expirationTime := time.Now().Add(5 * time.Minute)
+	expirationTime := time.Now().Add(20 * time.Second)
 	claims := jwt.StandardClaims{
 		ExpiresAt: expirationTime.Unix(),
 	}
@@ -22,4 +23,18 @@ func GenerateJWT() (string, bool) {
 	}
 
 	return tokenString, true
+}
+
+func RefreshToken() bool {
+	if time.Until(time.Now().Add(time.Duration(jwt.StandardClaims{}.ExpiresAt))) > 5*time.Second {
+		return false
+	} else {
+		tokenString, ok := GenerateJWT()
+		if ok {
+			redis.SetAccountInfo("LoginToken", tokenString)
+			return true
+		} else {
+			return false
+		}
+	}
 }
