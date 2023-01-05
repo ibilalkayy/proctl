@@ -10,7 +10,7 @@ import (
 )
 
 func GenerateJWT() (string, bool) {
-	expirationTime := time.Now().Add(20 * time.Second)
+	expirationTime := time.Now().Add(5 * time.Minute)
 	claims := jwt.StandardClaims{
 		ExpiresAt: expirationTime.Unix(),
 	}
@@ -26,7 +26,7 @@ func GenerateJWT() (string, bool) {
 }
 
 func RefreshToken() bool {
-	if time.Until(time.Now().Add(time.Duration(jwt.StandardClaims{}.ExpiresAt))) > 5*time.Second {
+	if time.Until(time.Now().Add(time.Duration(jwt.StandardClaims{}.ExpiresAt))) > 30*time.Second {
 		return false
 	} else {
 		tokenString, ok := GenerateJWT()

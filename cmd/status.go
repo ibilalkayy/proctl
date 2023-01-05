@@ -17,7 +17,6 @@ var statusCmd = &cobra.Command{
 		if len(loginToken) != 0 && jwt.RefreshToken() {
 			accountName := redis.GetAccountInfo("AccountName")
 			fmt.Printf("%s is logged in.\n", accountName)
-			fmt.Println(loginToken)
 		} else {
 			fmt.Println("User is logged out.")
 		}
