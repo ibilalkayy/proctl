@@ -39,6 +39,14 @@ var loginCmd = &cobra.Command{
 					if redisSignupFound && jwtTokenGenerated && mysqlFound && loginEmail == mysqlEmail && loginEmail == redisSignupEmail[i] {
 						redis.SetAccountInfo("LoginToken", tokenString)
 						redis.SetAccountInfo("AccountName", redisSignupAccountName[i])
+						redis.SetAccountInfo("AccountEmail", redisSignupEmail[i])
+						redis.SetAccountInfo("AccountPassword", redisSignupPassword[i])
+
+						AccountEmail := redis.GetAccountInfo("AccountEmail")
+						AccountPassword := redis.GetAccountInfo("AccountPassword")
+						combinedText := AccountEmail + AccountPassword
+						encodedText := Encode(combinedText)
+						redis.SetAccountInfo("VerificationCode", encodedText)
 						fmt.Println("You're successfully logged in.")
 						break
 					} else {

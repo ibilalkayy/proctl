@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"log"
@@ -9,33 +10,13 @@ import (
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/jwt"
-	"github.com/ibilalkayy/proctl/middleware"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/gomail.v2"
 )
 
-func Verify(toEmail, accountName string) {
-	mail := gomail.NewMessage()
-	myEmail := middleware.LoadEnvVariable("APP_EMAIL")
-	myPassword := middleware.LoadEnvVariable("APP_PASSWORD")
-	mail.SetHeader("From", myEmail)
-	mail.SetHeader("To", toEmail)
-	mail.SetHeader("Reply-To", myEmail)
-	mail.SetHeader("Subject", "[proctl] Confirm your email address")
-	mail.SetBody("text/html", fmt.Sprintf(`
-	<center><h1>We're glad you're here, %s.</h1></center>
-	<center>We just want to confirm it's you.<br><br></center>
-	<center>
-		<button style="background-color:#008CBA; border-color:#008CBA; border-radius: 4px; color:white; height: 50px; width: 300px;">
-			Click to confirm your email address
-		</button>
-	<center>
-	<center><br>If you didn't create a proctl account, just delete this email.</center>`, accountName))
-	a := gomail.NewDialer("smtp.gmail.com", 587, myEmail, myPassword)
-	if err := a.DialAndSend(mail); err != nil {
-		log.Fatal(err)
-	}
+type AccountInfo struct {
+	GetAccountName string
+	GetEncodedText string
 }
 
 func emailValid(email string) bool {
@@ -49,6 +30,11 @@ func HashPassword(value []byte) string {
 		log.Fatal(err)
 	}
 	return string(hash)
+}
+
+func Encode(s string) string {
+	body := base64.StdEncoding.EncodeToString([]byte(s))
+	return string(body)
 }
 
 // signupCmd represents the signup command
@@ -71,11 +57,17 @@ var signupCmd = &cobra.Command{
 				tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 				if jwtTokenGenerated {
 					redis.SetCredentials(signupEmail, hashPass, signupAccountName)
-					_, _, redisSignupAccountName, _ := redis.GetCredentials()
+					redisSignupEmail, redisSignupPassword, redisSignupAccountName, _ := redis.GetCredentials()
 					redis.SetAccountInfo("LoginToken", tokenString)
 					redis.SetAccountInfo("AccountName", redisSignupAccountName[0])
-					accountName := redis.GetAccountInfo("AccountName")
-					Verify(signupEmail, accountName)
+					redis.SetAccountInfo("AccountEmail", redisSignupEmail[0])
+					redis.SetAccountInfo("AccountPassword", redisSignupPassword[0])
+
+					AccountEmail := redis.GetAccountInfo("AccountEmail")
+					AccountPassword := redis.GetAccountInfo("AccountPassword")
+					combinedText := AccountEmail + AccountPassword
+					encodedText := Encode(combinedText)
+					redis.SetAccountInfo("VerificationCode", encodedText)
 					fmt.Println("You have successfully created an account.")
 				} else {
 					fmt.Println("Signup failure.")
