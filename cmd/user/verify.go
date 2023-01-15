@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 
+	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/jwt"
 	"github.com/ibilalkayy/proctl/middleware"
@@ -59,17 +60,26 @@ var verifyCmd = &cobra.Command{
 		if len(loginToken) != 0 && jwt.RefreshToken() {
 			AccountName := redis.GetAccountInfo("AccountName")
 			AccountEmail := redis.GetAccountInfo("AccountEmail")
-			Verify(AccountEmail, AccountName)
-
-			var verificationCode string
-			fmt.Printf("Enter the verification code: ")
-			fmt.Scanln(&verificationCode)
-
+			AccountPassword := redis.GetAccountInfo("AccountPassword")
 			getVerificationCode := redis.GetAccountInfo("VerificationCode")
-			if getVerificationCode == verificationCode {
-				fmt.Println("You're successfully verified")
+
+			_, _, mysqlStatus, _ := mysql.FindAccount(AccountEmail, AccountPassword)
+			if mysqlStatus == "0" && len(getVerificationCode) != 0 {
+
+				Verify(AccountEmail, AccountName)
+				var verificationCode string
+				fmt.Printf("Enter the verification code: ")
+				fmt.Scanln(&verificationCode)
+
+				if getVerificationCode == verificationCode {
+					redis.DelToken("VerificationCode")
+					mysql.UpdateStatus("1", AccountEmail, AccountPassword)
+					fmt.Println("You're successfully verified")
+				} else {
+					fmt.Println(errors.New("Error in verification. Please try again!!"))
+				}
 			} else {
-				fmt.Println(errors.New("You're not verified"))
+				fmt.Println(errors.New("Your account is already verified"))
 			}
 		} else {
 			fmt.Println(errors.New("First login to verify an account"))

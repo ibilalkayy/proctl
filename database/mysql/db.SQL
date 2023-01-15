@@ -3,5 +3,7 @@ CREATE TABLE IF NOT EXISTS Signup (
     emails VARCHAR(255) NOT NULL UNIQUE,
     passwords VARCHAR(255) NOT NULL,
     fullnames VARCHAR(255) NOT NULL,
-    accountnames VARCHAR(255) NOT NULL
+    accountnames VARCHAR(255) NOT NULL,
+    is_active TINYINT NOT NULL,
+    created_at DATETIME NOT NULL
 );

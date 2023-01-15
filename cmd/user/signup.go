@@ -67,7 +67,11 @@ var signupCmd = &cobra.Command{
 					AccountPassword := redis.GetAccountInfo("AccountPassword")
 					combinedText := AccountEmail + AccountPassword
 					encodedText := Encode(combinedText)
-					redis.SetAccountInfo("VerificationCode", encodedText)
+
+					_, _, mysqlStatus, _ := mysql.FindAccount(AccountEmail, AccountPassword)
+					if mysqlStatus == "0" {
+						redis.SetAccountInfo("VerificationCode", encodedText)
+					}
 					fmt.Println("You have successfully created an account.")
 				} else {
 					fmt.Println("Signup failure.")
