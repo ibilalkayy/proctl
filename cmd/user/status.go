@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/jwt"
 	"github.com/spf13/cobra"
@@ -24,5 +25,5 @@ var statusCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(statusCmd)
+	cmd.RootCmd.AddCommand(statusCmd)
 }

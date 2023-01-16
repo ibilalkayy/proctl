@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 
+	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/jwt"
@@ -26,14 +27,11 @@ func Verify(toEmail, accountName string) {
 		log.Fatal(err)
 	}
 
-	AccountEmail := redis.GetAccountInfo("AccountEmail")
-	AccountPassword := redis.GetAccountInfo("AccountPassword")
-	combinedText := AccountEmail + AccountPassword
-	encodedText := Encode(combinedText)
+	AccountDetails := GetDetails()
 
 	getAccountName := AccountInfo{
 		GetAccountName: accountName,
-		GetEncodedText: encodedText,
+		GetEncodedText: AccountDetails[2],
 	}
 
 	if err := temp.Execute(body, getAccountName); err != nil {
@@ -88,5 +86,5 @@ var verifyCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(verifyCmd)
+	cmd.RootCmd.AddCommand(verifyCmd)
 }

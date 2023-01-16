@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/spf13/cobra"
 )
@@ -35,5 +36,5 @@ var logoutCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(logoutCmd)
+	cmd.RootCmd.AddCommand(logoutCmd)
 }

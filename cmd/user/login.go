@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/jwt"
@@ -42,12 +43,9 @@ var loginCmd = &cobra.Command{
 						redis.SetAccountInfo("AccountEmail", redisSignupEmail[i])
 						redis.SetAccountInfo("AccountPassword", redisSignupPassword[i])
 
-						AccountEmail := redis.GetAccountInfo("AccountEmail")
-						AccountPassword := redis.GetAccountInfo("AccountPassword")
-						combinedText := AccountEmail + AccountPassword
-						encodedText := Encode(combinedText)
+						AccountDetails := GetDetails()
 						if mysqlStatus == "0" {
-							redis.SetAccountInfo("VerificationCode", encodedText)
+							redis.SetAccountInfo("VerificationCode", AccountDetails[2])
 						}
 						fmt.Println("You're successfully logged in.")
 						break
@@ -64,7 +62,7 @@ var loginCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(loginCmd)
+	cmd.RootCmd.AddCommand(loginCmd)
 	loginCmd.Flags().StringP("email", "e", "", "Specify an email address to login")
 	loginCmd.Flags().StringP("password", "p", "", "Specify the password to login")
 }

@@ -7,6 +7,7 @@ import (
 	"log"
 	"regexp"
 
+	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/jwt"
@@ -37,6 +38,15 @@ func Encode(s string) string {
 	return string(body)
 }
 
+func GetDetails() [3]string {
+	var AccountDetails [3]string
+	AccountDetails[0] = redis.GetAccountInfo("AccountEmail")
+	AccountDetails[1] = redis.GetAccountInfo("AccountPassword")
+	combinedText := AccountDetails[0] + AccountDetails[1]
+	AccountDetails[2] = Encode(combinedText)
+	return AccountDetails
+}
+
 // signupCmd represents the signup command
 var signupCmd = &cobra.Command{
 	Use:   "signup",
@@ -63,14 +73,10 @@ var signupCmd = &cobra.Command{
 					redis.SetAccountInfo("AccountEmail", redisSignupEmail[0])
 					redis.SetAccountInfo("AccountPassword", redisSignupPassword[0])
 
-					AccountEmail := redis.GetAccountInfo("AccountEmail")
-					AccountPassword := redis.GetAccountInfo("AccountPassword")
-					combinedText := AccountEmail + AccountPassword
-					encodedText := Encode(combinedText)
-
-					_, _, mysqlStatus, _ := mysql.FindAccount(AccountEmail, AccountPassword)
+					AccountDetails := GetDetails()
+					_, _, mysqlStatus, _ := mysql.FindAccount(AccountDetails[0], AccountDetails[1])
 					if mysqlStatus == "0" {
-						redis.SetAccountInfo("VerificationCode", encodedText)
+						redis.SetAccountInfo("VerificationCode", AccountDetails[2])
 					}
 					fmt.Println("You have successfully created an account.")
 				} else {
@@ -86,7 +92,7 @@ var signupCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(signupCmd)
+	cmd.RootCmd.AddCommand(signupCmd)
 	signupCmd.Flags().StringP("email", "e", "", "Specify an email address to signup")
 	signupCmd.Flags().StringP("password", "p", "", "Specify the password to signup")
 	signupCmd.Flags().StringP("full name", "f", "", "Specify the full name to signup")
