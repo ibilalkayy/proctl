@@ -7,3 +7,11 @@ CREATE TABLE IF NOT EXISTS Signup (
     is_active TINYINT NOT NULL,
     created_at DATETIME NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS Profiles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    titles VARCHAR(255) NOT NULL,
+    phones VARCHAR(255) NOT NULL,
+    locations VARCHAR(255) NOT NULL,
+    working_statuses VARCHAR(255) NOT NULL
+);
