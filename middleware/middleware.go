@@ -20,3 +20,9 @@ func LoadEnvVariable(key string) string {
 
 	return value
 }
+
+func HandleError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
