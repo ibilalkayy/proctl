@@ -24,11 +24,11 @@ func FindAccount(email, password string) (string, string, string, bool) {
 	return uc.Email, uc.Password, uc.Status, true
 }
 
-func FindProfile(title, phone string) bool {
+func FindProfile(email string) bool {
 	db := Connect()
 	var pc ProfileCredentials
-	q := "SELECT titles, phones, locations, working_statuses FROM Profiles WHERE titles=? and phones=?"
-	if err := db.QueryRow(q, title, phone).Scan(&pc.Title, &pc.Phone, &pc.Location, &pc.Working_status); err != nil {
+	q := "SELECT titles, phones, locations, working_statuses FROM Profiles WHERE emails=?"
+	if err := db.QueryRow(q, email).Scan(&pc.Title, &pc.Phone, &pc.Location, &pc.Working_status); err != nil {
 		return false
 	}
 	return true

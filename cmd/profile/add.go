@@ -21,12 +21,17 @@ var addCmd = &cobra.Command{
 		profileLocation, _ := cmd.Flags().GetString("location")
 		profileWorkingStatus, _ := cmd.Flags().GetString("working status")
 
-		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) != 0 && jwt.RefreshToken() {
-			profileData := [4]string{profileTitle, profilePhone, profileLocation, profileWorkingStatus}
-			mysql.InsertProfileData(profileData)
+		if len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0 {
+			loginToken := redis.GetAccountInfo("LoginToken")
+			if len(loginToken) != 0 && jwt.RefreshToken() {
+				AccountEmail := redis.GetAccountInfo("AccountEmail")
+				profileData := [5]string{AccountEmail, profileTitle, profilePhone, profileLocation, profileWorkingStatus}
+				mysql.InsertProfileData(profileData)
+			} else {
+				fmt.Println(errors.New("First login to add the profile information."))
+			}
 		} else {
-			fmt.Println(errors.New("First login to add the profile information."))
+			fmt.Println(errors.New("Give the flags to insert the profile information."))
 		}
 	},
 }

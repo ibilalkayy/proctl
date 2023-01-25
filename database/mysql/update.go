@@ -16,15 +16,15 @@ func UpdateStatus(status, email, password string) {
 	}
 }
 
-func UpdateProfile(value [4]string, title, phone string) {
+func UpdateProfile(value [4]string, email string) {
 	db := Connect()
-	q := "UPDATE Profiles SET titles=?, phones=?, locations=?, working_statuses=? WHERE titles=? AND phones=?"
+	q := "UPDATE Profiles SET titles=?, phones=?, locations=?, working_statuses=? WHERE emails=?"
 	update, err := db.Prepare(q)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = update.Exec(value[0], value[1], value[2], value[3], title, phone)
+	_, err = update.Exec(value[0], value[1], value[2], value[3], email)
 	if err != nil {
 		log.Fatal(err)
 	}
