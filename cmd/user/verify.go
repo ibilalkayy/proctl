@@ -57,6 +57,7 @@ var verifyCmd = &cobra.Command{
 		loginToken := redis.GetAccountInfo("LoginToken")
 		if len(loginToken) != 0 && jwt.RefreshToken() {
 			AccountName := redis.GetAccountInfo("AccountName")
+			AccountFullName := redis.GetAccountInfo("AccountFullName")
 			AccountEmail := redis.GetAccountInfo("AccountEmail")
 			AccountPassword := redis.GetAccountInfo("AccountPassword")
 			getVerificationCode := redis.GetAccountInfo("VerificationCode")
@@ -71,7 +72,8 @@ var verifyCmd = &cobra.Command{
 
 				if getVerificationCode == verificationCode {
 					redis.DelToken("VerificationCode")
-					mysql.UpdateStatus("1", AccountEmail, AccountPassword)
+					date := [3]string{AccountFullName, AccountName, "1"}
+					mysql.UpdateUser(date, AccountEmail, AccountPassword)
 					fmt.Println("You're successfully verified")
 				} else {
 					fmt.Println(errors.New("Error in verification. Please try again!!"))

@@ -2,15 +2,15 @@ package mysql
 
 import "log"
 
-func UpdateStatus(status, email, password string) {
+func UpdateUser(value [3]string, email, password string) {
 	db := Connect()
-	q := "UPDATE Signup SET is_active=? WHERE emails=? AND passwords=?"
+	q := "UPDATE Signup SET fullnames=?, accountnames=?, is_active=? WHERE emails=? AND passwords=?"
 	update, err := db.Prepare(q)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = update.Exec(status, email, password)
+	_, err = update.Exec(value[0], value[1], value[2], email, password)
 	if err != nil {
 		log.Fatal(err)
 	}

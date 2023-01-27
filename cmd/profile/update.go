@@ -39,8 +39,10 @@ var updateCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(updateCmd)
-	updateCmd.Flags().StringP("title", "t", "", "Specify an account title")
-	updateCmd.Flags().StringP("phone", "p", "", "Specify an account phone number")
-	updateCmd.Flags().StringP("location", "l", "", "Specify an account location")
-	updateCmd.Flags().StringP("working status", "w", "", "Specify an account working status")
+	updateCmd.Flags().StringP("title", "t", "", "Specify an account title to update")
+	updateCmd.Flags().StringP("phone", "p", "", "Specify an account phone number to update")
+	updateCmd.Flags().StringP("location", "l", "", "Specify an account location to update")
+	updateCmd.Flags().StringP("working status", "w", "", "Specify an account working status to update")
+	updateCmd.Flags().StringP("full name", "f", "", "Specify the full name to update")
+	updateCmd.Flags().StringP("account name", "a", "", "Specify the account name to update")
 }

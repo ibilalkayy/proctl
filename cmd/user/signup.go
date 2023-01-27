@@ -66,10 +66,11 @@ var signupCmd = &cobra.Command{
 
 				tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 				if jwtTokenGenerated {
-					redis.SetCredentials(signupEmail, hashPass, signupAccountName)
-					redisSignupEmail, redisSignupPassword, redisSignupAccountName, _ := redis.GetCredentials()
+					redis.SetCredentials(signupEmail, hashPass, signupFullName, signupAccountName)
+					redisSignupEmail, redisSignupPassword, redisSignupFullName, redisSignupAccountName, _ := redis.GetCredentials()
 					redis.SetAccountInfo("LoginToken", tokenString)
 					redis.SetAccountInfo("AccountName", redisSignupAccountName[0])
+					redis.SetAccountInfo("AccountFullName", redisSignupFullName[0])
 					redis.SetAccountInfo("AccountEmail", redisSignupEmail[0])
 					redis.SetAccountInfo("AccountPassword", redisSignupPassword[0])
 

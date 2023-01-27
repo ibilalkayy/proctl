@@ -22,15 +22,17 @@ func RedisConnect() *redis.Client {
 	return client
 }
 
-func SetCredentials(email, password, accountName string) {
+func SetCredentials(email, password, fullName, accountName string) {
 	client := RedisConnect()
 	insertEmails, err := client.LPush("Emails", email).Result()
 	insertPasswords, err := client.LPush("Passwords", password).Result()
+	insertFullName, err := client.LPush("Full Names", fullName).Result()
 	insertAccountName, err := client.LPush("Account Names", accountName).Result()
 
 	if err != nil {
 		fmt.Println(insertEmails)
 		fmt.Println(insertPasswords)
+		fmt.Println(insertFullName)
 		fmt.Println(insertAccountName)
 	}
 }
