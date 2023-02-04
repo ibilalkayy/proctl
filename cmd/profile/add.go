@@ -21,17 +21,22 @@ var addCmd = &cobra.Command{
 		profileLocation, _ := cmd.Flags().GetString("location")
 		profileWorkingStatus, _ := cmd.Flags().GetString("working status")
 
-		if len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0 {
-			loginToken := redis.GetAccountInfo("LoginToken")
-			if len(loginToken) != 0 && jwt.RefreshToken() {
-				AccountEmail := redis.GetAccountInfo("AccountEmail")
+		loginToken := redis.GetAccountInfo("LoginToken")
+		AccountEmail := redis.GetAccountInfo("AccountEmail")
+		if len(loginToken) != 0 && jwt.RefreshToken() {
+			if len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0 {
 				profileData := [5]string{AccountEmail, profileTitle, profilePhone, profileLocation, profileWorkingStatus}
+				redis.SetAccountInfo("ProfileTitle", profileTitle)
+				redis.SetAccountInfo("ProfilePhone", profilePhone)
+				redis.SetAccountInfo("ProfileLocation", profileLocation)
+				redis.SetAccountInfo("ProfileWorkingStatus", profileWorkingStatus)
 				mysql.InsertProfileData(profileData)
+				fmt.Println("Your profile data is successfully inserted.")
 			} else {
-				fmt.Println(errors.New("First login to add the profile information."))
+				fmt.Println(errors.New("Give the flags to insert the profile information."))
 			}
 		} else {
-			fmt.Println(errors.New("Give the flags to insert the profile information."))
+			fmt.Println(errors.New("First login to add the profile information."))
 		}
 	},
 }

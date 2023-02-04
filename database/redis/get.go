@@ -2,13 +2,10 @@ package redis
 
 import (
 	"encoding/json"
-
-	"github.com/ibilalkayy/proctl/database/mysql"
 )
 
-func GetCredentials() ([]string, []string, []string, []string, bool) {
+func GetCredentials(totalColumns int) ([]string, []string, []string, []string, bool) {
 	client := RedisConnect()
-	totalColumns := mysql.CountTableColumns("Signup")
 	getEmails, err := client.LRange("Emails", 0, int64(totalColumns)-1).Result()
 	getPasswords, err := client.LRange("Passwords", 0, int64(totalColumns)-1).Result()
 	getFullName, err := client.LRange("Full Names", 0, int64(totalColumns)-1).Result()

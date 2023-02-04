@@ -36,8 +36,6 @@ func InsertProfileData(value [5]string) {
 
 	defer insert.Close()
 
-	insertMessage := "Your profile data is successfully inserted."
-
 	profileFound := FindProfile(value[0])
 	if profileFound {
 		fmt.Println("Your profile data is already inserted. Type 'proctl update [flags]'")
@@ -47,23 +45,18 @@ func InsertProfileData(value [5]string) {
 		} else if len(value[1]) == 0 {
 			_, err := insert.Exec(value[0], "", value[2], value[3], value[4])
 			middleware.HandleError(err)
-			fmt.Println(insertMessage)
 		} else if len(value[2]) == 0 {
 			_, err := insert.Exec(value[0], value[1], "", value[3], value[4])
 			middleware.HandleError(err)
-			fmt.Println(insertMessage)
 		} else if len(value[3]) == 0 {
 			_, err := insert.Exec(value[0], value[1], value[2], "", value[4])
 			middleware.HandleError(err)
-			fmt.Println(insertMessage)
 		} else if len(value[4]) == 0 {
 			_, err := insert.Exec(value[0], value[1], value[2], value[3], "")
 			middleware.HandleError(err)
-			fmt.Println(insertMessage)
 		} else {
 			_, err := insert.Exec(value[0], value[1], value[2], value[3], value[4])
 			middleware.HandleError(err)
-			fmt.Println(insertMessage)
 		}
 	}
 }

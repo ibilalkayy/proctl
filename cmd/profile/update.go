@@ -21,18 +21,19 @@ var updateCmd = &cobra.Command{
 		profileLocation, _ := cmd.Flags().GetString("location")
 		profileWorkingStatus, _ := cmd.Flags().GetString("working status")
 
-		if len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0 {
-			loginToken := redis.GetAccountInfo("LoginToken")
-			if len(loginToken) != 0 && jwt.RefreshToken() {
+		loginToken := redis.GetAccountInfo("LoginToken")
+		AccountEmail := redis.GetAccountInfo("AccountEmail")
+
+		if len(loginToken) != 0 && jwt.RefreshToken() {
+			if len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0 {
 				profileData := [4]string{profileTitle, profilePhone, profileLocation, profileWorkingStatus}
-				AccountEmail := redis.GetAccountInfo("AccountEmail")
 				mysql.UpdateProfile(profileData, AccountEmail)
 				fmt.Println("Your profile data is successfully updated.")
 			} else {
-				fmt.Println(errors.New("First login to add the profile information."))
+				fmt.Println(errors.New("Give the flags to update the profile information."))
 			}
 		} else {
-			fmt.Println(errors.New("Give the flags to update the profile information."))
+			fmt.Println(errors.New("First login to add the profile information."))
 		}
 	},
 }
