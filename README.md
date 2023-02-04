@@ -10,7 +10,7 @@ With Proctl, you can create workspaces, boards, projects and tasks, and arrange 
 
 To run Proctl, simply run the following command:
 
-`go run cmd/proctl.go`
+`go run main.go`
 
 ## Configuration
 
