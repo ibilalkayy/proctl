@@ -11,13 +11,20 @@ func UpdateUser(value [3]string, email, password string) {
 	db := Connect()
 	q := "UPDATE Signup SET fullnames=?, accountnames=?, is_active=? WHERE emails=? AND passwords=?"
 	update, err := db.Prepare(q)
-	if err != nil {
-		log.Fatal(err)
+	middleware.HandleError(err)
+
+	if len(value[0]) != 0 {
+		redis.SetAccountInfo("AccountFullName", value[0])
+		getAccountName := redis.GetAccountInfo("AccountName")
+		_, err = update.Exec(value[0], getAccountName, value[2], email, password)
+		middleware.HandleError(err)
 	}
 
-	_, err = update.Exec(value[0], value[1], value[2], email, password)
-	if err != nil {
-		log.Fatal(err)
+	if len(value[1]) != 0 {
+		redis.SetAccountInfo("AccountName", value[1])
+		getFullName := redis.GetAccountInfo("AccountFullName")
+		_, err = update.Exec(getFullName, value[1], value[2], email, password)
+		middleware.HandleError(err)
 	}
 }
 

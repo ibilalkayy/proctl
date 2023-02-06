@@ -72,8 +72,8 @@ var verifyCmd = &cobra.Command{
 
 				if getVerificationCode == verificationCode {
 					redis.DelToken("VerificationCode")
-					date := [3]string{AccountFullName, AccountName, "1"}
-					mysql.UpdateUser(date, AccountEmail, AccountPassword)
+					userData := [3]string{AccountFullName, AccountName, "1"}
+					mysql.UpdateUser(userData, AccountEmail, AccountPassword)
 					fmt.Println("You're successfully verified")
 				} else {
 					fmt.Println(errors.New("Error in verification. Please try again!!"))

@@ -20,14 +20,27 @@ var updateCmd = &cobra.Command{
 		profilePhone, _ := cmd.Flags().GetString("phone")
 		profileLocation, _ := cmd.Flags().GetString("location")
 		profileWorkingStatus, _ := cmd.Flags().GetString("working status")
+		profileFullName, _ := cmd.Flags().GetString("full name")
+		profileAccountName, _ := cmd.Flags().GetString("account name")
 
 		loginToken := redis.GetAccountInfo("LoginToken")
-		AccountEmail := redis.GetAccountInfo("AccountEmail")
+		accountEmail := redis.GetAccountInfo("AccountEmail")
+		accountPassword := redis.GetAccountInfo("AccountPassword")
+		verificationCode := redis.GetAccountInfo("VerificationCode")
+
+		_, _, mysqlStatus, _ := mysql.FindAccount(accountEmail, accountPassword)
 
 		if len(loginToken) != 0 && jwt.RefreshToken() {
-			if len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0 {
+			if len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0 || len(profileFullName) != 0 || len(profileAccountName) != 0 {
+				if mysqlStatus == "0" && len(verificationCode) != 0 {
+					userData := [3]string{profileFullName, profileAccountName, "0"}
+					mysql.UpdateUser(userData, accountEmail, accountPassword)
+				} else if mysqlStatus == "1" && len(verificationCode) == 0 {
+					userData := [3]string{profileFullName, profileAccountName, "1"}
+					mysql.UpdateUser(userData, accountEmail, accountPassword)
+				}
 				profileData := [4]string{profileTitle, profilePhone, profileLocation, profileWorkingStatus}
-				mysql.UpdateProfile(profileData, AccountEmail)
+				mysql.UpdateProfile(profileData, accountEmail)
 				fmt.Println("Your profile data is successfully updated.")
 			} else {
 				fmt.Println(errors.New("Give the flags to update the profile information."))
