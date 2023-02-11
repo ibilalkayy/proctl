@@ -30,4 +30,16 @@ Proctl also supports local flags that will only run when the action is called di
 
 ## Contributing
 
-If you would like to contribute to Proctl, please open a pull request or issue on the GitHub repository.
+If you would like to contribute to Proctl, then here is a [contribution guide](CONTRIBUTING.md) that you can check and raise an issue.
+
+## Feedback
+
+We’d love to hear your thoughts on this project. Feel free to drop us a note!
+
+- [Twitter](https://twitter.com/ibilalkayy)
+
+- [LinkedIn](https://www.linkedin.com/in/ibilalkayy/)
+
+## License
+
+- [Apache-2.0 license](https://raw.githubusercontent.com/ibilalkayy/proctl/master/LICENSE)
