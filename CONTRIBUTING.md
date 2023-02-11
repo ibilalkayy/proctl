@@ -7,6 +7,7 @@ Thank you for your interest in contributing to the proctl project. Our goal is t
 - [Purpose and Goals](#purpose-and-goals)
 - [Contributions](#contributions)
   - [Process for Accepting Contributions](#process-for-accepting-contributions)
+- [Communication and Collaboration](#communication-and-collaboration)
 
 ## **Purpose and Goals**
 
@@ -116,3 +117,13 @@ Once you've pushed your changes to GitHub, you can submit a "pull request" to me
 To submit a pull request, go to the main page of your fork of the repository on GitHub and click the "Compare and pull request" button. Provide a clear and concise description of your changes and any relevant details or questions.
 
 The team will review your pull request and provide feedback as needed. Once your pull request has been reviewed and accepted, it will be merged into the main branch of the repository.
+
+## **Communication and Collaboration**
+
+We encourage all contributors to communicate with the team and collaborate with one another to create the best possible project management software in CLI.
+
+Here are some guidelines for communication and collaboration:
+
+- Use the repository's issue tracker to report bugs, suggest improvements, or ask questions.
+- Use the repository's pull request system to submit contributions for review.
+- Be respectful and considerate of others when communicating.
