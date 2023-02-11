@@ -37,7 +37,7 @@ To contribute to Proclt, please follow these steps:
 
 To contribute to the Linux for Pirates! guide, please follow these steps:
 
-**Open an issue** 
+- **Open an issue** 
 
 Before you start working on a contribution, we recommend opening an issue to discuss it with the team. This will allow us to provide feedback and guidance, and ensure that your contribution is in line with the goals and vision of the project.
 
@@ -45,13 +45,13 @@ Before you start working on a contribution, we recommend opening an issue to dis
 
 To open an issue, go to the [issue tracker](https://github.com/ibilalkayy/proctl/issues) and click the "New Issue" button. Provide a clear and concise description of your proposed contribution, and any relevant details or questions.
 
-**Fork the repository**
+- **Fork the repository**
 
 A repository is a collection of files that make up the Linux for Pirates! guide. To contribute to the guide, you'll need to create a copy of the repository on your own GitHub account. This is called "forking" the repository.
 
 To fork the repository, go to the main page of the Linux for Pirates! repository on GitHub and click the "Fork" button. This will create a copy of the repository on your own account.
 
-**Clone the repository**
+- **Clone the repository**
 
 Now that you have a copy of the repository on your own account, you'll need to download it to your computer so you can make changes to it. This is called "cloning" the repository.
 
@@ -63,7 +63,7 @@ git clone https://github.com/YOUR-USERNAME/proctl.git
 
 Replace `"YOUR-USERNAME"` with your actual GitHub username. This will download the repository to your computer.
 
-**Create a new branch**
+- **Create a new branch**
 
 When you make changes to the proctl project, you should do so it in a separate branch. This is a good practice because it allows you to test your changes without affecting the main branch of the repository.
 
@@ -75,7 +75,7 @@ git branch NEW-BRANCH-NAME
 
 Replace `"NEW-BRANCH-NAME"` with a descriptive name for your branch.
 
-**Switch to the new branch**
+- **Switch to the new branch**
 
 Now that you've created a new branch, you need to switch to it. Enter the following command in the terminal:
 
@@ -83,11 +83,11 @@ Now that you've created a new branch, you need to switch to it. Enter the follow
 git checkout NEW-BRANCH-NAME
 ```
 
-**Make your changes**
+- **Make your changes**
 
 Open the files in the proctl repository in your text editor and make the changes you want to contribute.
 
-**Commit your changes**
+- **Commit your changes**
 
 When you're finished making changes, you need to "commit" them to the repository. This is like saving your changes, but it also allows you to add a message explaining what you did.
 
@@ -99,7 +99,7 @@ git commit -am "YOUR COMMIT MESSAGE"
 
 Replace `"YOUR COMMIT MESSAGE"` with a brief description of your changes.
 
-**Push your changes to GitHub**
+- **Push your changes to GitHub**
 
 Now that you've committed your changes, you need to "push" them to your fork of the repository on GitHub. This will make your changes visible to the rest of the team.
 
@@ -109,7 +109,7 @@ To push your changes, enter the following command in the terminal:
 git push origin NEW-BRANCH-NAME
 ```
 
-**Submit a pull request**
+- **Submit a pull request**
 
 Once you've pushed your changes to GitHub, you can submit a "pull request" to merge your changes into the main branch of the repository.
 
