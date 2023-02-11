@@ -58,7 +58,7 @@ Now that you have a copy of the repository on your own account, you'll need to d
 To clone the repository, open a terminal or command prompt and enter the following command:
 
 ```bash
-`git clone https://github.com/YOUR-USERNAME/proctl.git`
+git clone https://github.com/YOUR-USERNAME/proctl.git
 ```
 
 Replace `"YOUR-USERNAME"` with your actual GitHub username. This will download the repository to your computer.
@@ -70,7 +70,7 @@ When you make changes to the proctl project, you should do so it in a separate b
 To create a new branch, enter the following command in the terminal:
 
 ```bash
-`git branch NEW-BRANCH-NAME`
+git branch NEW-BRANCH-NAME
 ```
 
 Replace `"NEW-BRANCH-NAME"` with a descriptive name for your branch.
@@ -80,7 +80,7 @@ Replace `"NEW-BRANCH-NAME"` with a descriptive name for your branch.
 Now that you've created a new branch, you need to switch to it. Enter the following command in the terminal:
 
 ```bash
-`git checkout NEW-BRANCH-NAME`
+git checkout NEW-BRANCH-NAME
 ```
 
 **Make your changes**
@@ -94,7 +94,7 @@ When you're finished making changes, you need to "commit" them to the repository
 To commit your changes, enter the following command in the terminal:
 
 ```bash
-`git commit -am "YOUR COMMIT MESSAGE"`
+git commit -am "YOUR COMMIT MESSAGE"
 ```
 
 Replace `"YOUR COMMIT MESSAGE"` with a brief description of your changes.
@@ -106,7 +106,7 @@ Now that you've committed your changes, you need to "push" them to your fork of 
 To push your changes, enter the following command in the terminal:
 
 ```bash
-`git push origin NEW-BRANCH-NAME`
+git push origin NEW-BRANCH-NAME
 ```
 
 **Submit a pull request**
