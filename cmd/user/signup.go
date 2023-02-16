@@ -4,15 +4,14 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"log"
 	"regexp"
 
 	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/jwt"
+	"github.com/ibilalkayy/proctl/middleware"
 	"github.com/spf13/cobra"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type AccountInfo struct {
@@ -23,14 +22,6 @@ type AccountInfo struct {
 func emailValid(email string) bool {
 	regexEmail := regexp.MustCompile(`^[a-zA-Z0-9-_]+@[a-z]+\.[a-z]{1,3}$`)
 	return regexEmail.MatchString(email)
-}
-
-func HashPassword(value []byte) string {
-	hash, err := bcrypt.GenerateFromPassword(value, bcrypt.MinCost)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(hash)
 }
 
 func Encode(s string) string {
@@ -56,7 +47,7 @@ var signupCmd = &cobra.Command{
 		signupPassword, _ := cmd.Flags().GetString("password")
 		signupFullName, _ := cmd.Flags().GetString("full name")
 		signupAccountName, _ := cmd.Flags().GetString("account name")
-		hashPass := HashPassword([]byte(signupPassword))
+		hashPass := middleware.HashPassword([]byte(signupPassword))
 
 		loginToken := redis.GetAccountInfo("LoginToken")
 		if len(loginToken) == 0 {

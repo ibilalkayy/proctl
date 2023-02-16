@@ -7,23 +7,38 @@ import (
 	"github.com/ibilalkayy/proctl/middleware"
 )
 
-func UpdateUser(value [3]string, email, password string) {
+func UpdateUser(value [4]string, email, password string) {
 	db := Connect()
-	q := "UPDATE Signup SET fullnames=?, accountnames=?, is_active=? WHERE emails=? AND passwords=?"
+	q := "UPDATE Signup SET fullnames=?, accountnames=?, passwords=?, is_active=? WHERE emails=? AND passwords=?"
 	update, err := db.Prepare(q)
 	middleware.HandleError(err)
 
 	if len(value[0]) != 0 {
 		redis.SetAccountInfo("AccountFullName", value[0])
 		getAccountName := redis.GetAccountInfo("AccountName")
-		_, err = update.Exec(value[0], getAccountName, value[2], email, password)
+		getPassword := redis.GetAccountInfo("AccountPassword")
+		_, err = update.Exec(value[0], getAccountName, getPassword, value[3], email, password)
 		middleware.HandleError(err)
 	}
 
 	if len(value[1]) != 0 {
 		redis.SetAccountInfo("AccountName", value[1])
 		getFullName := redis.GetAccountInfo("AccountFullName")
-		_, err = update.Exec(getFullName, value[1], value[2], email, password)
+		getPassword := redis.GetAccountInfo("AccountPassword")
+		_, err = update.Exec(getFullName, value[1], getPassword, value[3], email, password)
+		middleware.HandleError(err)
+	}
+
+	if len(value[2]) != 0 {
+		redis.SetAccountInfo("AccountPassword", value[2])
+		getFullName := redis.GetAccountInfo("AccountFullName")
+		getAccountName := redis.GetAccountInfo("AccountName")
+		hashPass := middleware.HashPassword([]byte(value[2]))
+		redis.DelToken("LoginToken")
+
+		getAccountEmail := redis.GetAccountInfo("AccountEmail")
+		redis.SetCredentials(getAccountEmail, hashPass, getFullName, getAccountName)
+		_, err = update.Exec(getFullName, getAccountName, hashPass, value[3], email, password)
 		middleware.HandleError(err)
 	}
 }
