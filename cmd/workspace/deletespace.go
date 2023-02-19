@@ -7,9 +7,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// deleteCmd represents the delete command
-var deleteCmd = &cobra.Command{
-	Use:   "delete",
+// deletespaceCmd represents the deletespace command
+var deletespaceCmd = &cobra.Command{
+	Use:   "deletespace",
 	Short: "Delete a workspace",
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteWorkspace, _ := cmd.Flags().GetString("name")
@@ -18,6 +18,6 @@ var deleteCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(deleteCmd)
-	deleteCmd.Flags().StringP("name", "n", "", "Specify the name of workspace to delete it")
+	cmd.RootCmd.AddCommand(deletespaceCmd)
+	deletespaceCmd.Flags().StringP("name", "n", "", "Specify the name of workspace to delete it")
 }

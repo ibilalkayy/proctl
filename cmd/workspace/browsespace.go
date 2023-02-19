@@ -7,15 +7,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// browseCmd represents the browse command
-var browseCmd = &cobra.Command{
-	Use:   "browse",
-	Short: "Give all the workspaces",
+// browsespaceCmd represents the browsespace command
+var browsespaceCmd = &cobra.Command{
+	Use:   "browsespace",
+	Short: "Browse all the workspaces",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("workspaces list")
 	},
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(browseCmd)
+	cmd.RootCmd.AddCommand(browsespaceCmd)
 }
