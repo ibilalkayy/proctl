@@ -10,7 +10,7 @@ import (
 // newspaceCmd represents the newspace command
 var newspaceCmd = &cobra.Command{
 	Use:   "newspace",
-	Short: "A brief description of your command",
+	Short: "Add a new workspace",
 	Run: func(cmd *cobra.Command, args []string) {
 		newWorkspace, _ := cmd.Flags().GetString("name")
 		fmt.Println(newWorkspace)

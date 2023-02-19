@@ -10,7 +10,7 @@ import (
 // renamespaceCmd represents the renamespace command
 var renamespaceCmd = &cobra.Command{
 	Use:   "renamespace",
-	Short: "A brief description of your command",
+	Short: "Rename an existing workspace",
 	Run: func(cmd *cobra.Command, args []string) {
 		renameWorkspace, _ := cmd.Flags().GetString("name")
 		fmt.Println(renameWorkspace)
@@ -19,5 +19,5 @@ var renamespaceCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(renamespaceCmd)
-	renamespaceCmd.Flags().StringP("name", "n", "", "Specify the name to add a workspace")
+	renamespaceCmd.Flags().StringP("name", "n", "", "Specify the name to rename an existing workspace")
 }

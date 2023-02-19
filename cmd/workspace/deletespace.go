@@ -19,5 +19,5 @@ var deletespaceCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(deletespaceCmd)
-	deletespaceCmd.Flags().StringP("name", "n", "", "Specify the name of workspace to delete it")
+	deletespaceCmd.Flags().StringP("name", "n", "", "Specify the name of the workspace to delete it")
 }
