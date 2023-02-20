@@ -1,9 +1,13 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ibilalkayy/proctl/cmd"
+	"github.com/ibilalkayy/proctl/database/mysql"
+	"github.com/ibilalkayy/proctl/database/redis"
+	"github.com/ibilalkayy/proctl/jwt"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +16,14 @@ var browsespaceCmd = &cobra.Command{
 	Use:   "browsespace",
 	Short: "Browse all the workspaces",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("workspaces list")
+		loginToken := redis.GetAccountInfo("LoginToken")
+		accountEmail := redis.GetAccountInfo("AccountEmail")
+
+		if len(loginToken) != 0 && jwt.RefreshToken() {
+			mysql.FindWorkspace(accountEmail)
+		} else {
+			fmt.Println(errors.New("First login to add a new workspace"))
+		}
 	},
 }
 

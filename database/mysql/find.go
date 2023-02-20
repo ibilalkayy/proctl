@@ -1,5 +1,11 @@
 package mysql
 
+import (
+	"fmt"
+
+	"github.com/ibilalkayy/proctl/middleware"
+)
+
 type UserCredentials struct {
 	Email    string
 	Password string
@@ -32,4 +38,22 @@ func FindProfile(email string) bool {
 		return false
 	}
 	return true
+}
+
+func FindWorkspace(email string) string {
+	db := Connect()
+	q := "SELECT names FROM Workspace WHERE emails=?"
+	rows, err := db.Query(q, email)
+	middleware.HandleError(err)
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var Names string
+		err := rows.Scan(&Names)
+		middleware.HandleError(err)
+
+		fmt.Println(Names)
+	}
+	return ""
 }

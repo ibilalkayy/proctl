@@ -16,3 +16,9 @@ CREATE TABLE IF NOT EXISTS Profiles (
     locations VARCHAR(255) NOT NULL,
     working_statuses VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS Workspace (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    emails VARCHAR(255) NOT NULL,
+    names VARCHAR(255) NOT NULL
+);

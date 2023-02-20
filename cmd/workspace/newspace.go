@@ -1,9 +1,13 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ibilalkayy/proctl/cmd"
+	"github.com/ibilalkayy/proctl/database/mysql"
+	"github.com/ibilalkayy/proctl/database/redis"
+	"github.com/ibilalkayy/proctl/jwt"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +17,16 @@ var newspaceCmd = &cobra.Command{
 	Short: "Add a new workspace",
 	Run: func(cmd *cobra.Command, args []string) {
 		newWorkspace, _ := cmd.Flags().GetString("name")
-		fmt.Println(newWorkspace)
+		accountEmail := redis.GetAccountInfo("AccountEmail")
+		values := [2]string{accountEmail, newWorkspace}
+		loginToken := redis.GetAccountInfo("LoginToken")
+
+		if len(loginToken) != 0 && jwt.RefreshToken() {
+			mysql.InsertWorkspaceData(values)
+			fmt.Println("New workspace is successfully added")
+		} else {
+			fmt.Println(errors.New("First login to add a new workspace"))
+		}
 	},
 }
 

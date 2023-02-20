@@ -3,7 +3,6 @@ package mysql
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/ibilalkayy/proctl/middleware"
@@ -13,18 +12,14 @@ func InsertSignupData(value [4]string) {
 	db := CreateTable(0)
 	q := "INSERT INTO Signup(emails, passwords, fullnames, accountnames, is_active, created_at) VALUES(?, ?, ?, ?, ?, ?)"
 	insert, err := db.Prepare(q)
-	if err != nil {
-		log.Fatal(err)
-	}
+	middleware.HandleError(err)
 
 	defer insert.Close()
 
 	if len(value[0]) != 0 || len(value[1]) != 0 {
 		currentTime := time.Now()
 		_, err := insert.Exec(value[0], value[1], value[2], value[3], 0, currentTime)
-		if err != nil {
-			log.Fatal(err)
-		}
+		middleware.HandleError(err)
 	}
 }
 
@@ -58,5 +53,19 @@ func InsertProfileData(value [5]string) {
 			_, err := insert.Exec(value[0], value[1], value[2], value[3], value[4])
 			middleware.HandleError(err)
 		}
+	}
+}
+
+func InsertWorkspaceData(value [2]string) {
+	db := CreateTable(2)
+	q := "INSERT INTO Workspace(emails, names) VALUES(?, ?)"
+	insert, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer insert.Close()
+
+	if len(value[0]) != 0 && len(value[1]) != 0 {
+		_, err := insert.Exec(value[0], value[1])
+		middleware.HandleError(err)
 	}
 }
