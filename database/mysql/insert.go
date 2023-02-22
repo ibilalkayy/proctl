@@ -58,7 +58,7 @@ func InsertProfileData(value [5]string) {
 
 func InsertWorkspaceData(value [2]string) {
 	db := CreateTable(2)
-	q := "INSERT INTO Workspace(emails, names) VALUES(?, ?)"
+	q := "INSERT INTO Workspaces(emails, names) VALUES(?, ?)"
 	insert, err := db.Prepare(q)
 	middleware.HandleError(err)
 

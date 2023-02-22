@@ -1,7 +1,8 @@
 package mysql
 
 import (
-	"log"
+	"errors"
+	"fmt"
 
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/middleware"
@@ -12,6 +13,8 @@ func UpdateUser(value [4]string, email, password string) {
 	q := "UPDATE Signup SET fullnames=?, accountnames=?, passwords=?, is_active=? WHERE emails=? AND passwords=?"
 	update, err := db.Prepare(q)
 	middleware.HandleError(err)
+
+	defer update.Close()
 
 	if len(value[0]) != 0 {
 		redis.SetAccountInfo("AccountFullName", value[0])
@@ -47,9 +50,9 @@ func UpdateProfile(value [4]string, email string) {
 	db := Connect()
 	q := "UPDATE Profiles SET titles=?, phones=?, locations=?, working_statuses=? WHERE emails=?"
 	update, err := db.Prepare(q)
-	if err != nil {
-		log.Fatal(err)
-	}
+	middleware.HandleError(err)
+
+	defer update.Close()
 
 	if len(value[0]) != 0 {
 		redis.SetAccountInfo("ProfileTitle", value[0])
@@ -85,5 +88,21 @@ func UpdateProfile(value [4]string, email string) {
 		getLocation := redis.GetAccountInfo("ProfileLocation")
 		_, err = update.Exec(getTitle, getPhone, getLocation, value[3], email)
 		middleware.HandleError(err)
+	}
+}
+
+func UpdateWorkspace(value [3]string) {
+	db := Connect()
+	q := "UPDATE Workspaces SET names=? WHERE emails=? AND names=?"
+	update, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer update.Close()
+
+	if len(value[0]) != 0 && len(value[1]) != 0 && len(value[2]) != 0 {
+		_, err = update.Exec(value[0], value[1], value[2])
+		middleware.HandleError(err)
+	} else {
+		fmt.Println(errors.New("More flags are required to update the workspace"))
 	}
 }
