@@ -42,7 +42,7 @@ func FindProfile(email string) bool {
 
 func FindWorkspace(email string) string {
 	db := Connect()
-	q := "SELECT names FROM Workspace WHERE emails=?"
+	q := "SELECT names FROM Workspaces WHERE emails=?"
 	rows, err := db.Query(q, email)
 	middleware.HandleError(err)
 
@@ -56,4 +56,14 @@ func FindWorkspace(email string) string {
 		fmt.Println(Names)
 	}
 	return ""
+}
+
+func FindWorkspaceName(email, name string) string {
+	db := Connect()
+	var Name string
+	q := "SELECT names FROM Workspaces WHERE emails=? AND names=?"
+	if err := db.QueryRow(q, email, name).Scan(&Name); err != nil {
+		return ""
+	}
+	return Name
 }

@@ -16,14 +16,19 @@ var newspaceCmd = &cobra.Command{
 	Use:   "newspace",
 	Short: "Add a new workspace",
 	Run: func(cmd *cobra.Command, args []string) {
-		newWorkspace, _ := cmd.Flags().GetString("name")
+		newWorkspaceName, _ := cmd.Flags().GetString("name")
 		accountEmail := redis.GetAccountInfo("AccountEmail")
-		values := [2]string{accountEmail, newWorkspace}
+		values := [2]string{accountEmail, newWorkspaceName}
 		loginToken := redis.GetAccountInfo("LoginToken")
 
 		if len(loginToken) != 0 && jwt.RefreshToken() {
-			mysql.InsertWorkspaceData(values)
-			fmt.Println("New workspace is successfully added")
+			oldWorkspaceName := mysql.FindWorkspaceName(accountEmail, newWorkspaceName)
+			if oldWorkspaceName == newWorkspaceName {
+				fmt.Println(errors.New("The workspace name is already present. Please try another one"))
+			} else {
+				mysql.InsertWorkspaceData(values)
+				fmt.Println("New workspace is successfully added")
+			}
 		} else {
 			fmt.Println(errors.New("First login to add a new workspace"))
 		}
