@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
+	"github.com/ibilalkayy/proctl/jwt"
 	"github.com/spf13/cobra"
 )
 
@@ -17,10 +19,20 @@ var renamespaceCmd = &cobra.Command{
 		oldWorkspaceName, _ := cmd.Flags().GetString("oldname")
 		newWorkspaceName, _ := cmd.Flags().GetString("newname")
 		accountEmail := redis.GetAccountInfo("AccountEmail")
-
+		loginToken := redis.GetAccountInfo("LoginToken")
+		foundWorkspaceName := mysql.FindWorkspaceName(accountEmail, oldWorkspaceName)
 		values := [3]string{newWorkspaceName, accountEmail, oldWorkspaceName}
-		mysql.UpdateWorkspace(values)
-		fmt.Println("Your workspace is successfully renamed.")
+
+		if len(loginToken) != 0 && jwt.RefreshToken() {
+			if oldWorkspaceName == foundWorkspaceName {
+				mysql.UpdateWorkspace(values)
+				fmt.Println("Your workspace is successfully renamed")
+			} else {
+				fmt.Println(errors.New("A workspace is not present by this name"))
+			}
+		} else {
+			fmt.Println(errors.New("First login to rename a workspace"))
+		}
 	},
 }
 

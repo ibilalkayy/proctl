@@ -69,3 +69,17 @@ func InsertWorkspaceData(value [2]string) {
 		middleware.HandleError(err)
 	}
 }
+
+func InsertMemberData(email string) {
+	db := CreateTable(3)
+	q := "INSERT INTO Members(emails) VALUES(?)"
+	insert, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer insert.Close()
+
+	if len(email) != 0 {
+		_, err := insert.Exec(email)
+		middleware.HandleError(err)
+	}
+}

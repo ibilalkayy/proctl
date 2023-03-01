@@ -35,7 +35,7 @@ func Verify(toEmail, accountName string) {
 	}
 
 	if err := temp.Execute(body, getAccountName); err != nil {
-		fmt.Println(errors.New("Count load the template"))
+		fmt.Println(errors.New("Cannot load the template"))
 	}
 
 	mail.SetHeader("From", myEmail)

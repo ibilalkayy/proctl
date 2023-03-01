@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
+	"github.com/ibilalkayy/proctl/jwt"
 	"github.com/spf13/cobra"
 )
 
@@ -14,12 +16,22 @@ var deletespaceCmd = &cobra.Command{
 	Use:   "deletespace",
 	Short: "Delete a workspace",
 	Run: func(cmd *cobra.Command, args []string) {
-		deleteWorkspace, _ := cmd.Flags().GetString("name")
+		deleteWorkspaceName, _ := cmd.Flags().GetString("name")
 		accountEmail := redis.GetAccountInfo("AccountEmail")
+		loginToken := redis.GetAccountInfo("LoginToken")
+		values := [2]string{accountEmail, deleteWorkspaceName}
+		oldWorkspaceName := mysql.FindWorkspaceName(accountEmail, deleteWorkspaceName)
 
-		values := [2]string{accountEmail, deleteWorkspace}
-		mysql.DeleteWorkspace(values)
-		fmt.Println("Your workspace is successfully deleted")
+		if len(loginToken) != 0 && jwt.RefreshToken() {
+			if deleteWorkspaceName == oldWorkspaceName {
+				mysql.DeleteWorkspace(values)
+				fmt.Println("Your workspace is successfully deleted")
+			} else {
+				fmt.Println(errors.New("A workspace is not present by this name"))
+			}
+		} else {
+			fmt.Println(errors.New("First login to delete a workspace"))
+		}
 	},
 }
 
