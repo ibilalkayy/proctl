@@ -22,7 +22,7 @@ func Verify(toEmail, accountName string) {
 	myPassword := middleware.LoadEnvVariable("APP_PASSWORD")
 
 	body := new(bytes.Buffer)
-	temp, err := template.ParseFiles("cmd/views/template.html")
+	temp, err := template.ParseFiles("cmd/views/account-template.html")
 	if err != nil {
 		log.Fatal(err)
 	}
