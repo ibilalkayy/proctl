@@ -1,6 +1,16 @@
 # Proctl
 
-Proctl is a project management software that is using the functionality of Monday.com in a command line interface.
+Proctl, a project management software that utilizes the functionality of Monday.com in a command line interface, has several strong points that make it a valuable tool for managing projects. Some of these strengths include:
+
+Efficiency: With a command-line interface, Proctl allows for quick and efficient task management without the need to navigate through a graphical user interface (GUI). This can save time and improve productivity for users who prefer a command line interface.
+
+Familiarity: For users who are already comfortable working with command line interfaces, Proctl provides a familiar and intuitive way to manage tasks, making it easier to adopt as a new tool.
+
+Customization: Proctl allows for customization and automation of tasks using scripting and other command-line tools, giving users more control over their workflow and allowing for greater flexibility in project management.
+
+Integration: By using the functionality of Monday.com, Proctl can seamlessly integrate with other software tools and services, providing users with a comprehensive project management solution that can be tailored to their specific needs.
+
+Security: Command line interfaces typically have fewer security vulnerabilities compared to GUI-based applications. Proctl provides an additional layer of security, ensuring that sensitive project information is kept secure and protected from unauthorized access.
 
 ## Overview
 
