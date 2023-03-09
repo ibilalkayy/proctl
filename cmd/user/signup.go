@@ -1,4 +1,4 @@
-package cmd
+package user
 
 import (
 	"encoding/base64"
@@ -13,11 +13,6 @@ import (
 	"github.com/ibilalkayy/proctl/middleware"
 	"github.com/spf13/cobra"
 )
-
-type AccountInfo struct {
-	GetAccountName string
-	GetEncodedText string
-}
 
 func emailValid(email string) bool {
 	regexEmail := regexp.MustCompile(`^[a-zA-Z0-9-_]+@[a-z]+\.[a-z]{1,3}$`)

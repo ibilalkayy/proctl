@@ -1,53 +1,16 @@
-package cmd
+package user
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"html/template"
-	"log"
 
 	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
+	"github.com/ibilalkayy/proctl/email"
 	"github.com/ibilalkayy/proctl/jwt"
-	"github.com/ibilalkayy/proctl/middleware"
 	"github.com/spf13/cobra"
-	"gopkg.in/gomail.v2"
 )
-
-func Verify(toEmail, accountName string) {
-	mail := gomail.NewMessage()
-	myEmail := middleware.LoadEnvVariable("APP_EMAIL")
-	myPassword := middleware.LoadEnvVariable("APP_PASSWORD")
-
-	body := new(bytes.Buffer)
-	temp, err := template.ParseFiles("cmd/views/account-template.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	AccountDetails := GetDetails()
-
-	getAccountName := AccountInfo{
-		GetAccountName: accountName,
-		GetEncodedText: AccountDetails[2],
-	}
-
-	if err := temp.Execute(body, getAccountName); err != nil {
-		fmt.Println(errors.New("Cannot load the template"))
-	}
-
-	mail.SetHeader("From", myEmail)
-	mail.SetHeader("To", toEmail)
-	mail.SetHeader("Reply-To", myEmail)
-	mail.SetHeader("Subject", "[proctl] Confirm your email address")
-	mail.SetBody("text/html", body.String())
-	a := gomail.NewDialer("smtp.gmail.com", 587, myEmail, myPassword)
-	if err := a.DialAndSend(mail); err != nil {
-		log.Fatal(err)
-	}
-}
 
 // verifyCmd represents the verify command
 var verifyCmd = &cobra.Command{
@@ -65,7 +28,9 @@ var verifyCmd = &cobra.Command{
 			_, _, mysqlStatus, _ := mysql.FindAccount(AccountEmail, AccountPassword)
 			if mysqlStatus == "0" && len(getVerificationCode) != 0 {
 
-				Verify(AccountEmail, AccountName)
+				accountDetails := GetDetails()
+				values := [5]string{"account-template", AccountName, accountDetails[2], AccountEmail, "[proctl] Confirm your email address"}
+				email.Verify(values)
 				var verificationCode string
 				fmt.Printf("Enter the verification code: ")
 				fmt.Scanln(&verificationCode)
@@ -74,6 +39,8 @@ var verifyCmd = &cobra.Command{
 					redis.DelToken("VerificationCode")
 					userData := [4]string{AccountFullName, AccountName, AccountPassword, "1"}
 					mysql.UpdateUser(userData, AccountEmail, AccountPassword)
+					tokenString, _ := jwt.GenerateJWT()
+					redis.SetAccountInfo("LoginToken", tokenString)
 					fmt.Println("You're successfully verified")
 				} else {
 					fmt.Println(errors.New("Error in verification. Please try again!!"))
