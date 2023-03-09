@@ -21,10 +21,9 @@ var invitespaceCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		inviteWorkspaceEmail, _ := cmd.Flags().GetString("email")
 		accountName := redis.GetAccountInfo("AccountName")
+		values := [5]string{"member-template", accountName, "", inviteWorkspaceEmail, accountName + " has invited you to collaborate on the proctl project"}
 		var verificationCode string
 
-		// VerifyMember(inviteWorkspaceEmail, accountName)
-		values := [5]string{"member-template", accountName, "", inviteWorkspaceEmail, accountName + " has invited you to collaborate on the proctl project"}
 		email.Verify(values)
 		fmt.Printf("Enter the verification code: ")
 		fmt.Scanln(&verificationCode)
