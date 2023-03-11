@@ -28,8 +28,11 @@ var verifyCmd = &cobra.Command{
 			_, _, mysqlStatus, _ := mysql.FindAccount(AccountEmail, AccountPassword)
 			if mysqlStatus == "0" && len(getVerificationCode) != 0 {
 
-				accountDetails := GetDetails()
-				values := [5]string{"account-template", AccountName, accountDetails[2], AccountEmail, "[proctl] Confirm your email address"}
+				accountEmail := redis.GetAccountInfo("AccountEmail")
+				accountPassword := redis.GetAccountInfo("AccountPassword")
+
+				accountCode := GetRandomCode(accountEmail, accountPassword)
+				values := [5]string{"account-template", AccountName, accountCode, AccountEmail, "[proctl] Confirm your email address"}
 				email.Verify(values)
 				var verificationCode string
 				fmt.Printf("Enter the verification code: ")

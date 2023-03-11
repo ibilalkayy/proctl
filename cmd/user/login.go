@@ -43,10 +43,12 @@ var loginCmd = &cobra.Command{
 						redis.SetAccountInfo("AccountName", redisSignupAccountName[i])
 						redis.SetAccountInfo("AccountEmail", redisSignupEmail[i])
 						redis.SetAccountInfo("AccountPassword", redisSignupPassword[i])
+						accountEmail := redis.GetAccountInfo("AccountEmail")
+						accountPassword := redis.GetAccountInfo("AccountPassword")
 
-						AccountDetails := GetDetails()
+						accountCode := GetRandomCode(accountEmail, accountPassword)
 						if mysqlStatus == "0" {
-							redis.SetAccountInfo("VerificationCode", AccountDetails[2])
+							redis.SetAccountInfo("VerificationCode", accountCode)
 						}
 						fmt.Println("You're successfully logged in.")
 						break

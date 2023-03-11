@@ -24,12 +24,10 @@ func Encode(s string) string {
 	return string(body)
 }
 
-func GetDetails() [3]string {
-	var AccountDetails [3]string
-	AccountDetails[0] = redis.GetAccountInfo("AccountEmail")
-	AccountDetails[1] = redis.GetAccountInfo("AccountPassword")
-	combinedText := AccountDetails[0] + AccountDetails[1]
-	AccountDetails[2] = Encode(combinedText)
+func GetRandomCode(first, second string) string {
+	var AccountDetails string
+	combinedText := first + second
+	AccountDetails = Encode(combinedText)
 	return AccountDetails
 }
 
@@ -60,11 +58,13 @@ var signupCmd = &cobra.Command{
 					redis.SetAccountInfo("AccountFullName", redisSignupFullName[0])
 					redis.SetAccountInfo("AccountEmail", redisSignupEmail[0])
 					redis.SetAccountInfo("AccountPassword", redisSignupPassword[0])
+					accountEmail := redis.GetAccountInfo("AccountEmail")
+					accountPassword := redis.GetAccountInfo("AccountPassword")
 
-					AccountDetails := GetDetails()
-					_, _, mysqlStatus, _ := mysql.FindAccount(AccountDetails[0], AccountDetails[1])
+					accountCode := GetRandomCode(accountEmail, accountPassword)
+					_, _, mysqlStatus, _ := mysql.FindAccount(accountEmail, accountPassword)
 					if mysqlStatus == "0" {
-						redis.SetAccountInfo("VerificationCode", AccountDetails[2])
+						redis.SetAccountInfo("VerificationCode", accountCode)
 					}
 					fmt.Println("You have successfully created an account.")
 				} else {
