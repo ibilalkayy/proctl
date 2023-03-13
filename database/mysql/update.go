@@ -36,11 +36,12 @@ func UpdateUser(value [4]string, email, password string) {
 		redis.SetAccountInfo("AccountPassword", value[2])
 		getFullName := redis.GetAccountInfo("AccountFullName")
 		getAccountName := redis.GetAccountInfo("AccountName")
+		getAccountEmail := redis.GetAccountInfo("AccountEmail")
 		hashPass := middleware.HashPassword([]byte(value[2]))
 		redis.DelToken("LoginToken")
 
-		getAccountEmail := redis.GetAccountInfo("AccountEmail")
-		redis.SetCredentials(getAccountEmail, hashPass, getFullName, getAccountName)
+		values := [4]string{getAccountEmail, hashPass, getFullName, getAccountName}
+		redis.SetCredentials(values)
 		_, err = update.Exec(getFullName, getAccountName, hashPass, value[3], email, password)
 		middleware.HandleError(err)
 	}

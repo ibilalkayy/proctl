@@ -1,15 +1,18 @@
 package mysql
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/ibilalkayy/proctl/middleware"
 )
 
 type UserCredentials struct {
-	Email    string
-	Password string
-	Status   string
+	Email       string
+	Password    string
+	Status      string
+	FullName    string
+	AccountName string
 }
 
 type ProfileCredentials struct {
@@ -38,6 +41,44 @@ func FindProfile(email string) bool {
 		return false
 	}
 	return true
+}
+
+func queryUser(db *sql.DB, q string, args ...interface{}) UserCredentials {
+	var uc UserCredentials
+	row := db.QueryRow(q, args...)
+	err := row.Scan(&uc.Email, &uc.FullName, &uc.AccountName)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("")
+	}
+
+	return uc
+}
+
+func queryProfile(db *sql.DB, q string, args ...interface{}) ProfileCredentials {
+	var pc ProfileCredentials
+	row := db.QueryRow(q, args...)
+	err := row.Scan(&pc.Title, &pc.Phone, &pc.Location)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("")
+	}
+
+	return pc
+}
+
+func ListUserInfo(email, password string) string {
+	db := Connect()
+	q := "SELECT emails, fullnames, accountnames FROM Signup WHERE emails=? AND passwords=?"
+	uc := queryUser(db, q, email, password)
+	fmt.Printf("Email Address: %s\nFull Name: %s\nAccount Name: %s\n", uc.Email, uc.FullName, uc.AccountName)
+	return ""
+}
+
+func ListProfileInfo(email string) string {
+	db := Connect()
+	q := "SELECT titles, phones, locations FROM Profiles WHERE emails=?"
+	pc := queryProfile(db, q, email)
+	fmt.Printf("Title: %s\nPhone Number: %s\nLocation: %s\n", pc.Title, pc.Phone, pc.Location)
+	return ""
 }
 
 func FindWorkspace(email string) string {
