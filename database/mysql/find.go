@@ -48,7 +48,7 @@ func queryUser(db *sql.DB, q string, args ...interface{}) UserCredentials {
 	row := db.QueryRow(q, args...)
 	err := row.Scan(&uc.Email, &uc.FullName, &uc.AccountName)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("")
+		fmt.Printf("")
 	}
 
 	return uc
@@ -59,7 +59,7 @@ func queryProfile(db *sql.DB, q string, args ...interface{}) ProfileCredentials 
 	row := db.QueryRow(q, args...)
 	err := row.Scan(&pc.Title, &pc.Phone, &pc.Location)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("")
+		fmt.Printf("")
 	}
 
 	return pc
