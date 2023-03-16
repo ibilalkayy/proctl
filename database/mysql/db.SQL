@@ -25,5 +25,8 @@ CREATE TABLE IF NOT EXISTS Workspaces (
 
 CREATE TABLE IF NOT EXISTS Members (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    emails VARCHAR(255) NOT NULL
+    emails VARCHAR(255) NOT NULL,
+    passwords VARCHAR(255) NOT NULL,
+    fullnames VARCHAR(255) NOT NULL,
+    accountnames VARCHAR(255) NOT NULL
 );
