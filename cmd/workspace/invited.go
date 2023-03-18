@@ -14,7 +14,7 @@ import (
 // invitedCmd represents the invited command
 var invitedCmd = &cobra.Command{
 	Use:   "invited",
-	Short: "A brief description of your command",
+	Short: "Check the invitation of the member",
 	Run: func(cmd *cobra.Command, args []string) {
 		invitedEmail, _ := cmd.Flags().GetString("email")
 		loginToken := redis.GetAccountInfo("LoginToken")
@@ -27,8 +27,6 @@ var invitedCmd = &cobra.Command{
 
 				getVerificationCode := user.GetRandomCode(invitedEmail, invitedEmail)
 				if len(verificationCode) != 0 && getVerificationCode == verificationCode {
-					// tokenString, _ := jwt.GenerateJWT()
-					// redis.SetAccountInfo("LoginToken", tokenString)
 					values := [4]string{invitedEmail, "", "", ""}
 					mysql.InsertMemberData(values)
 					fmt.Println("Your account is successfully verified")

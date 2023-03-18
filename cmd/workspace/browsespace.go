@@ -20,7 +20,8 @@ var browsespaceCmd = &cobra.Command{
 		accountEmail := redis.GetAccountInfo("AccountEmail")
 
 		if len(loginToken) != 0 && jwt.RefreshToken() {
-			mysql.FindWorkspace(accountEmail)
+			hello := mysql.FindWorkspace(accountEmail)
+			fmt.Println(hello)
 		} else {
 			fmt.Println(errors.New("First login to add a new workspace"))
 		}

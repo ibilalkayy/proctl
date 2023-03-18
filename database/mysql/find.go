@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/ibilalkayy/proctl/middleware"
 )
@@ -89,14 +90,15 @@ func FindWorkspace(email string) string {
 
 	defer rows.Close()
 
+	var names []string
 	for rows.Next() {
-		var Names string
-		err := rows.Scan(&Names)
+		var name string
+		err := rows.Scan(&name)
 		middleware.HandleError(err)
 
-		fmt.Println(Names)
+		names = append(names, name)
 	}
-	return ""
+	return strings.Join(names, "\n")
 }
 
 func FindWorkspaceName(email, name string) string {
