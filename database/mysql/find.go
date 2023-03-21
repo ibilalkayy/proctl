@@ -110,3 +110,13 @@ func FindWorkspaceName(email, name string) string {
 	}
 	return Name
 }
+
+func FindMember(email string) bool {
+	db := Connect()
+	var Email string
+	q := "SELECT emails FROM Members WHERE emails=?"
+	if err := db.QueryRow(q, email).Scan(&Email); err != nil {
+		return false
+	}
+	return true
+}

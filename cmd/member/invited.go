@@ -1,4 +1,4 @@
-package workspace
+package member
 
 import (
 	"errors"
