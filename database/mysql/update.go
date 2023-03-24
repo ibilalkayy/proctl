@@ -108,7 +108,7 @@ func UpdateWorkspace(value [3]string) {
 	}
 }
 
-func UpdateMember(value [4]string) {
+func UpdateMember(value [3]string, email string) {
 	db := Connect()
 	q := "UPDATE Members SET passwords=?, fullnames=?, accountnames=? WHERE emails=?"
 	update, err := db.Prepare(q)
@@ -116,10 +116,10 @@ func UpdateMember(value [4]string) {
 
 	defer update.Close()
 
-	if len(value[0]) != 0 && len(value[1]) != 0 && len(value[2]) != 0 && len(value[3]) != 0 {
-		_, err = update.Exec(value[0], value[1], value[2], value[3])
+	if len(value[0]) != 0 && len(value[1]) != 0 && len(value[2]) != 0 && len(email) != 0 {
+		_, err = update.Exec(value[0], value[1], value[2], email)
 		middleware.HandleError(err)
 	} else {
-		fmt.Println(errors.New("More flags are required to update the workspace"))
+		fmt.Println(errors.New("More flags are required to update the member"))
 	}
 }
