@@ -24,27 +24,8 @@ var setmemCmd = &cobra.Command{
 
 		if len(loginToken) == 0 {
 			if memberFound && len(memberEmail) != 0 {
-				if len(memberPassword) != 0 {
-					redis.SetAccountInfo("MemberPassword", memberPassword)
-					fullName := redis.GetAccountInfo("MemberFullName")
-					accountName := redis.GetAccountInfo("MemberAccountName")
-					values := [3]string{memberPassword, fullName, accountName}
-					mysql.UpdateMember(values, memberEmail)
-				}
-				if len(memberFullName) != 0 {
-					redis.SetAccountInfo("MemberFullName", memberFullName)
-					password := redis.GetAccountInfo("MemberPassword")
-					accountName := redis.GetAccountInfo("MemberAccountName")
-					values := [3]string{password, memberFullName, accountName}
-					mysql.UpdateMember(values, memberEmail)
-				}
-				if len(memberAccountName) != 0 {
-					redis.SetAccountInfo("MemberAccount", memberAccountName)
-					password := redis.GetAccountInfo("MemberPassword")
-					fullName := redis.GetAccountInfo("MemberFullName")
-					values := [3]string{password, fullName, memberAccountName}
-					mysql.UpdateMember(values, memberEmail)
-				}
+				values := [3]string{memberPassword, memberFullName, memberAccountName}
+				mysql.UpdateMember(values, memberEmail)
 				fmt.Println("The member credentials are successfully updated")
 			} else {
 				fmt.Println(errors.New("Please enter the email address or type 'proctl setmem --help'"))

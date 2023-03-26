@@ -27,8 +27,7 @@ var invitedCmd = &cobra.Command{
 
 				getVerificationCode := user.GetRandomCode(invitedEmail, invitedEmail)
 				if len(verificationCode) != 0 && getVerificationCode == verificationCode {
-					values := [4]string{invitedEmail, "", "", ""}
-					mysql.InsertMemberData(values)
+					mysql.InsertMemberData(invitedEmail)
 					fmt.Println("Your account is successfully verified")
 				} else {
 					fmt.Println(errors.New("Please enter the correct verification code"))

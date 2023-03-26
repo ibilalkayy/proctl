@@ -108,18 +108,40 @@ func UpdateWorkspace(value [3]string) {
 	}
 }
 
+func SetMember() (string, string, string) {
+	password := redis.GetAccountInfo("MemberPassword")
+	fullName := redis.GetAccountInfo("MemberFullName")
+	accountName := redis.GetAccountInfo("MemberAccountName")
+
+	return password, fullName, accountName
+}
+
 func UpdateMember(value [3]string, email string) {
 	db := Connect()
-	q := "UPDATE Members SET passwords=?, fullnames=?, accountnames=? WHERE emails=?"
+	q := "UPDATE Members SET passwords=?, fullnames=?, accountnames=?, is_active=? WHERE emails=?"
 	update, err := db.Prepare(q)
 	middleware.HandleError(err)
 
 	defer update.Close()
 
-	if len(value[0]) != 0 && len(value[1]) != 0 && len(value[2]) != 0 && len(email) != 0 {
-		_, err = update.Exec(value[0], value[1], value[2], email)
+	if len(value[0]) != 0 && len(email) != 0 {
+		redis.SetAccountInfo("MemberPassword", value[0])
+		_, fullName, accountName := SetMember()
+		_, err = update.Exec(value[0], fullName, accountName, "1", email)
 		middleware.HandleError(err)
-	} else {
-		fmt.Println(errors.New("More flags are required to update the member"))
+	}
+
+	if len(value[1]) != 0 && len(email) != 0 {
+		redis.SetAccountInfo("MemberFullName", value[1])
+		password, _, accountName := SetMember()
+		_, err = update.Exec(password, value[1], accountName, "1", email)
+		middleware.HandleError(err)
+	}
+
+	if len(value[2]) != 0 && len(email) != 0 {
+		redis.SetAccountInfo("MemberAccountName", value[2])
+		password, fullName, _ := SetMember()
+		_, err = update.Exec(password, fullName, value[2], "1", email)
+		middleware.HandleError(err)
 	}
 }
