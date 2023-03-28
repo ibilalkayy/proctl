@@ -3,6 +3,7 @@ package mysql
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/middleware"
@@ -108,40 +109,62 @@ func UpdateWorkspace(value [3]string) {
 	}
 }
 
-func SetMember() (string, string, string) {
-	password := redis.GetAccountInfo("MemberPassword")
-	fullName := redis.GetAccountInfo("MemberFullName")
-	accountName := redis.GetAccountInfo("MemberAccountName")
-
-	return password, fullName, accountName
-}
-
-func UpdateMember(value [3]string, email string) {
+func UpdateMember(value [7]string, email string) {
 	db := Connect()
-	q := "UPDATE Members SET passwords=?, fullnames=?, accountnames=?, is_active=? WHERE emails=?"
+	q := "UPDATE Members SET "
+	var updateValues []interface{}
+
+	if len(value[0]) != 0 && len(email) != 0 {
+		q += "passwords=?, "
+		updateValues = append(updateValues, value[0])
+	}
+
+	if len(value[1]) != 0 && len(email) != 0 {
+		q += "fullnames=?, "
+		updateValues = append(updateValues, value[1])
+	}
+
+	if len(value[2]) != 0 && len(email) != 0 {
+		q += "accountnames=?, "
+		updateValues = append(updateValues, value[2])
+	}
+
+	if len(value[3]) != 0 && len(email) != 0 {
+		q += "titles=?, "
+		updateValues = append(updateValues, value[3])
+	}
+
+	if len(value[4]) != 0 && len(email) != 0 {
+		q += "phones=?, "
+		updateValues = append(updateValues, value[4])
+	}
+
+	if len(value[5]) != 0 && len(email) != 0 {
+		q += "locations=?, "
+		updateValues = append(updateValues, value[5])
+	}
+
+	if len(value[6]) != 0 && len(email) != 0 {
+		q += "working_statuses=?, "
+		updateValues = append(updateValues, value[6])
+	}
+
+	if len(updateValues) == 0 && len(email) == 0 {
+		return
+	}
+
+	q += "is_active=? WHERE emails=?"
+
+	updateValues = append(updateValues, "1")
+	updateValues = append(updateValues, email)
+
+	q = strings.TrimSuffix(q, ", ")
+
 	update, err := db.Prepare(q)
 	middleware.HandleError(err)
 
 	defer update.Close()
 
-	if len(value[0]) != 0 && len(email) != 0 {
-		redis.SetAccountInfo("MemberPassword", value[0])
-		_, fullName, accountName := SetMember()
-		_, err = update.Exec(value[0], fullName, accountName, "1", email)
-		middleware.HandleError(err)
-	}
-
-	if len(value[1]) != 0 && len(email) != 0 {
-		redis.SetAccountInfo("MemberFullName", value[1])
-		password, _, accountName := SetMember()
-		_, err = update.Exec(password, value[1], accountName, "1", email)
-		middleware.HandleError(err)
-	}
-
-	if len(value[2]) != 0 && len(email) != 0 {
-		redis.SetAccountInfo("MemberAccountName", value[2])
-		password, fullName, _ := SetMember()
-		_, err = update.Exec(password, fullName, value[2], "1", email)
-		middleware.HandleError(err)
-	}
+	_, err = update.Exec(updateValues...)
+	middleware.HandleError(err)
 }

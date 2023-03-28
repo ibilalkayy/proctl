@@ -20,11 +20,15 @@ var setmemCmd = &cobra.Command{
 		memberPassword, _ := cmd.Flags().GetString("password")
 		memberFullName, _ := cmd.Flags().GetString("full name")
 		memberAccountName, _ := cmd.Flags().GetString("account name")
+		memberTitle, _ := cmd.Flags().GetString("title")
+		memberPhone, _ := cmd.Flags().GetString("phone")
+		memberLocation, _ := cmd.Flags().GetString("location")
+		memberWorkingStatus, _ := cmd.Flags().GetString("working status")
 		memberFound := mysql.FindMember(memberEmail)
 
 		if len(loginToken) == 0 {
 			if memberFound && len(memberEmail) != 0 {
-				values := [3]string{memberPassword, memberFullName, memberAccountName}
+				values := [7]string{memberPassword, memberFullName, memberAccountName, memberTitle, memberPhone, memberLocation, memberWorkingStatus}
 				mysql.UpdateMember(values, memberEmail)
 				fmt.Println("The member credentials are successfully updated")
 			} else {
@@ -42,4 +46,8 @@ func init() {
 	setmemCmd.Flags().StringP("password", "p", "", "Specify a password to setup the credentials")
 	setmemCmd.Flags().StringP("full name", "f", "", "Specify a full name to setup the credentials")
 	setmemCmd.Flags().StringP("account name", "a", "", "Specify an account name to setup the credentials")
+	setmemCmd.Flags().StringP("title", "t", "", "Specify an account title to setup the credentials")
+	setmemCmd.Flags().StringP("phone", "n", "", "Specify an account phone number to setup the credentials")
+	setmemCmd.Flags().StringP("location", "l", "", "Specify an account location to setup the credentials")
+	setmemCmd.Flags().StringP("working status", "w", "", "Specify an account working status to setup the credentials")
 }

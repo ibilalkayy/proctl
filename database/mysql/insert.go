@@ -72,14 +72,14 @@ func InsertWorkspaceData(value [2]string) {
 
 func InsertMemberData(email string) {
 	db := CreateTable(3)
-	q := "INSERT INTO Members(emails, passwords, fullnames, accountnames, is_active, created_at) VALUES(?, ?, ?, ?, ?, ?)"
+	q := "INSERT INTO Members(emails, passwords, fullnames, accountnames, titles, phones, locations, working_statuses, is_active, created_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	insert, err := db.Prepare(q)
 	middleware.HandleError(err)
 
 	defer insert.Close()
 
 	if len(email) != 0 {
-		_, err := insert.Exec(email, "", "", "", "0", time.Now())
+		_, err := insert.Exec(email, "", "", "", "", "", "", "", "0", time.Now())
 		middleware.HandleError(err)
 	}
 }
