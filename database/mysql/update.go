@@ -49,48 +49,41 @@ func UpdateUser(value [4]string, email, password string) {
 }
 
 func UpdateProfile(value [4]string, email string) {
+	if len(value) == 0 && len(email) == 0 {
+		return
+	}
+
 	db := Connect()
-	q := "UPDATE Profiles SET titles=?, phones=?, locations=?, working_statuses=? WHERE emails=?"
+	q := "UPDATE Profiles SET "
+	var updateValues []interface{}
+
+	for i := 0; i < len(value); i++ {
+		if len(value[i]) != 0 {
+			switch i {
+			case 0:
+				q += "titles=?, "
+			case 1:
+				q += "phones=?, "
+			case 2:
+				q += "locations=?, "
+			case 3:
+				q += "working_statuses=?, "
+			}
+			updateValues = append(updateValues, value[i])
+		}
+	}
+
+	q = strings.TrimSuffix(q, ", ")
+	q += " WHERE emails=?"
+	updateValues = append(updateValues, email)
+
 	update, err := db.Prepare(q)
 	middleware.HandleError(err)
 
 	defer update.Close()
 
-	if len(value[0]) != 0 {
-		redis.SetAccountInfo("ProfileTitle", value[0])
-		getPhone := redis.GetAccountInfo("ProfilePhone")
-		getLocation := redis.GetAccountInfo("ProfileLocation")
-		getWorkingStatus := redis.GetAccountInfo("ProfileWorkingStatus")
-		_, err = update.Exec(value[0], getPhone, getLocation, getWorkingStatus, email)
-		middleware.HandleError(err)
-	}
-
-	if len(value[1]) != 0 {
-		redis.SetAccountInfo("ProfilePhone", value[1])
-		getTitle := redis.GetAccountInfo("ProfileTitle")
-		getLocation := redis.GetAccountInfo("ProfileLocation")
-		getWorkingStatus := redis.GetAccountInfo("ProfileWorkingStatus")
-		_, err = update.Exec(getTitle, value[1], getLocation, getWorkingStatus, email)
-		middleware.HandleError(err)
-	}
-
-	if len(value[2]) != 0 {
-		redis.SetAccountInfo("ProfileLocation", value[2])
-		getTitle := redis.GetAccountInfo("ProfileTitle")
-		getPhone := redis.GetAccountInfo("ProfilePhone")
-		getWorkingStatus := redis.GetAccountInfo("ProfileWorkingStatus")
-		_, err = update.Exec(getTitle, getPhone, value[2], getWorkingStatus, email)
-		middleware.HandleError(err)
-	}
-
-	if len(value[3]) != 0 {
-		redis.SetAccountInfo("ProfileWorkingStatus", value[3])
-		getTitle := redis.GetAccountInfo("ProfileTitle")
-		getPhone := redis.GetAccountInfo("ProfilePhone")
-		getLocation := redis.GetAccountInfo("ProfileLocation")
-		_, err = update.Exec(getTitle, getPhone, getLocation, value[3], email)
-		middleware.HandleError(err)
-	}
+	_, err = update.Exec(updateValues...)
+	middleware.HandleError(err)
 }
 
 func UpdateWorkspace(value [3]string) {
@@ -110,55 +103,38 @@ func UpdateWorkspace(value [3]string) {
 }
 
 func UpdateMember(value [7]string, email string) {
+	if len(value) == 0 && len(email) == 0 {
+		return
+	}
+
 	db := Connect()
 	q := "UPDATE Members SET "
 	var updateValues []interface{}
 
-	if len(value[0]) != 0 && len(email) != 0 {
-		q += "passwords=?, "
-		updateValues = append(updateValues, value[0])
-	}
-
-	if len(value[1]) != 0 && len(email) != 0 {
-		q += "fullnames=?, "
-		updateValues = append(updateValues, value[1])
-	}
-
-	if len(value[2]) != 0 && len(email) != 0 {
-		q += "accountnames=?, "
-		updateValues = append(updateValues, value[2])
-	}
-
-	if len(value[3]) != 0 && len(email) != 0 {
-		q += "titles=?, "
-		updateValues = append(updateValues, value[3])
-	}
-
-	if len(value[4]) != 0 && len(email) != 0 {
-		q += "phones=?, "
-		updateValues = append(updateValues, value[4])
-	}
-
-	if len(value[5]) != 0 && len(email) != 0 {
-		q += "locations=?, "
-		updateValues = append(updateValues, value[5])
-	}
-
-	if len(value[6]) != 0 && len(email) != 0 {
-		q += "working_statuses=?, "
-		updateValues = append(updateValues, value[6])
-	}
-
-	if len(updateValues) == 0 && len(email) == 0 {
-		return
+	for i := 0; i < len(value); i++ {
+		if len(value[i]) != 0 {
+			switch i {
+			case 0:
+				q += "passwords=?, "
+			case 1:
+				q += "fullnames=?, "
+			case 2:
+				q += "accountnames=?, "
+			case 3:
+				q += "titles=?, "
+			case 4:
+				q += "phones=?, "
+			case 5:
+				q += "locations=?, "
+			case 6:
+				q += "working_statuses=?, "
+			}
+			updateValues = append(updateValues, value[i])
+		}
 	}
 
 	q += "is_active=? WHERE emails=?"
-
-	updateValues = append(updateValues, "1")
-	updateValues = append(updateValues, email)
-
-	q = strings.TrimSuffix(q, ", ")
+	updateValues = append(updateValues, "1", email)
 
 	update, err := db.Prepare(q)
 	middleware.HandleError(err)
