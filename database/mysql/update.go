@@ -11,41 +11,32 @@ import (
 
 func UpdateUser(value [4]string, email, password string) {
 	db := Connect()
-	q := "UPDATE Signup SET fullnames=?, accountnames=?, passwords=?, is_active=? WHERE emails=? AND passwords=?"
-	update, err := db.Prepare(q)
-	middleware.HandleError(err)
-
-	defer update.Close()
+	defer db.Close()
 
 	if len(value[0]) != 0 {
 		redis.SetAccountInfo("AccountFullName", value[0])
-		getAccountName := redis.GetAccountInfo("AccountName")
-		getPassword := redis.GetAccountInfo("AccountPassword")
-		_, err = update.Exec(value[0], getAccountName, getPassword, value[3], email, password)
-		middleware.HandleError(err)
 	}
 
 	if len(value[1]) != 0 {
 		redis.SetAccountInfo("AccountName", value[1])
-		getFullName := redis.GetAccountInfo("AccountFullName")
-		getPassword := redis.GetAccountInfo("AccountPassword")
-		_, err = update.Exec(getFullName, value[1], getPassword, value[3], email, password)
-		middleware.HandleError(err)
 	}
 
+	var hashPass string
 	if len(value[2]) != 0 {
 		redis.SetAccountInfo("AccountPassword", value[2])
-		getFullName := redis.GetAccountInfo("AccountFullName")
-		getAccountName := redis.GetAccountInfo("AccountName")
-		getAccountEmail := redis.GetAccountInfo("AccountEmail")
-		hashPass := middleware.HashPassword([]byte(value[2]))
+		hashPass = middleware.HashPassword([]byte(value[2]))
 		redis.DelToken("LoginToken")
-
-		values := [4]string{getAccountEmail, hashPass, getFullName, getAccountName}
+		values := [4]string{redis.GetAccountInfo("AccountEmail"), hashPass, redis.GetAccountInfo("AccountFullName"), redis.GetAccountInfo("AccountName")}
 		redis.SetCredentials(values)
-		_, err = update.Exec(getFullName, getAccountName, hashPass, value[3], email, password)
-		middleware.HandleError(err)
+	} else {
+		hashPass = redis.GetAccountInfo("AccountPassword")
 	}
+
+	q := "UPDATE Signup SET fullnames=?, accountnames=?, passwords=?, is_active=? WHERE emails=? AND passwords=?"
+	_, err := db.Exec(q, redis.GetAccountInfo("AccountFullName"), redis.GetAccountInfo("AccountName"), hashPass, value[3], email, password)
+	middleware.HandleError(err)
+
+	redis.DelToken("LoginToken")
 }
 
 func UpdateProfile(value [4]string, email string) {
