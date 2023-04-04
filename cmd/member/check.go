@@ -11,29 +11,29 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// invitedCmd represents the invited command
-var invitedCmd = &cobra.Command{
-	Use:   "invited",
+// checkCmd represents the check command
+var checkCmd = &cobra.Command{
+	Use:   "check",
 	Short: "Check the invitation of the member",
 	Run: func(cmd *cobra.Command, args []string) {
-		invitedEmail, _ := cmd.Flags().GetString("email")
+		checkEmail, _ := cmd.Flags().GetString("email")
 		loginToken := redis.GetAccountInfo("LoginToken")
 		var verificationCode string
 
 		if len(loginToken) == 0 {
-			if len(invitedEmail) != 0 {
+			if len(checkEmail) != 0 {
 				fmt.Printf("Enter the verification code: ")
 				fmt.Scanln(&verificationCode)
 
-				getVerificationCode := user.GetRandomCode(invitedEmail, invitedEmail)
+				getVerificationCode := user.GetRandomCode(checkEmail, checkEmail)
 				if len(verificationCode) != 0 && getVerificationCode == verificationCode {
-					mysql.InsertMemberData(invitedEmail)
+					mysql.InsertMemberData(checkEmail)
 					fmt.Println("Your account is successfully verified")
 				} else {
 					fmt.Println(errors.New("Please enter the correct verification code"))
 				}
 			} else {
-				fmt.Println(errors.New("Please put the email address or type 'proctl invited --help' for help"))
+				fmt.Println(errors.New("Please put the email address or type 'proctl check --help' for help"))
 			}
 		} else {
 			fmt.Println(errors.New("First logout the check the invitation"))
@@ -42,6 +42,6 @@ var invitedCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(invitedCmd)
-	invitedCmd.Flags().StringP("email", "e", "", "Specify an email address to check that you're invited or not")
+	cmd.RootCmd.AddCommand(checkCmd)
+	checkCmd.Flags().StringP("email", "e", "", "Specify an email address to check that you're invited or not")
 }

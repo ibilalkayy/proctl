@@ -17,9 +17,9 @@ type MemberInfo struct {
 	GetAccountName string
 }
 
-// invitespaceCmd represents the invitespace command
-var invitespaceCmd = &cobra.Command{
-	Use:   "invitespace",
+// invitememCmd represents the invitemem command
+var invitememCmd = &cobra.Command{
+	Use:   "invitemem",
 	Short: "Invite other members in the workspace",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
@@ -44,6 +44,6 @@ var invitespaceCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(invitespaceCmd)
-	invitespaceCmd.Flags().StringP("email", "e", "", "Specify an email address to invite people")
+	cmd.RootCmd.AddCommand(invitememCmd)
+	invitememCmd.Flags().StringP("email", "e", "", "Specify an email address to invite people")
 }
