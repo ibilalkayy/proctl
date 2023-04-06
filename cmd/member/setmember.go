@@ -7,6 +7,7 @@ import (
 	"github.com/ibilalkayy/proctl/cmd"
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
+	"github.com/ibilalkayy/proctl/jwt"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,7 @@ var setmemCmd = &cobra.Command{
 	Short: "Setup the member credentials",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 		memberEmail, _ := cmd.Flags().GetString("email")
 		memberPassword, _ := cmd.Flags().GetString("password")
 		memberFullName, _ := cmd.Flags().GetString("full name")
@@ -26,13 +28,20 @@ var setmemCmd = &cobra.Command{
 		memberWorkingStatus, _ := cmd.Flags().GetString("working status")
 		memberFound := mysql.FindMember(memberEmail)
 
-		if len(loginToken) == 0 {
-			if memberFound && len(memberEmail) != 0 {
-				values := [7]string{memberPassword, memberFullName, memberAccountName, memberTitle, memberPhone, memberLocation, memberWorkingStatus}
-				mysql.UpdateMember(values, memberEmail)
-				fmt.Println("The member credentials are successfully updated")
+		if len(loginToken) == 0 && len(memberLoginToken) == 0 {
+			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
+			if jwtTokenGenerated {
+				redis.SetAccountInfo("MemberLoginToken", tokenString)
+				redis.SetAccountInfo("MemberAccountName", memberAccountName)
+				if memberFound && len(memberEmail) != 0 {
+					values := [7]string{memberPassword, memberFullName, memberAccountName, memberTitle, memberPhone, memberLocation, memberWorkingStatus}
+					mysql.UpdateMember(values, memberEmail)
+					fmt.Println("The member credentials are successfully updated")
+				} else {
+					fmt.Println(errors.New("Please enter the email address or type 'proctl setmem --help'"))
+				}
 			} else {
-				fmt.Println(errors.New("Please enter the email address or type 'proctl setmem --help'"))
+				fmt.Println(errors.New("Failure in setting up a member"))
 			}
 		} else {
 			fmt.Println(errors.New("First logout to setup the member credentials"))

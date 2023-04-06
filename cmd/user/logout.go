@@ -17,12 +17,14 @@ var logoutCmd = &cobra.Command{
 	Short: "Confirm it to logout",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) != 0 {
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
+		if len(loginToken) != 0 || len(memberLoginToken) != 0 {
 			fmt.Printf("Want to logout [y/n]: ")
 			fmt.Scanln(&choice)
 
 			if choice == "Y" || choice == "y" {
 				redis.DelToken("LoginToken")
+				redis.DelToken("MemberLoginToken")
 				fmt.Println("You're successfully logged out.")
 			} else if choice == "N" || choice == "n" {
 				fmt.Println("You're not logged out.")

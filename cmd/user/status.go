@@ -16,11 +16,21 @@ var statusCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
 		if len(loginToken) != 0 && jwt.RefreshToken() {
+			redis.DelToken("MemberLoginToken")
 			accountName := redis.GetAccountInfo("AccountName")
 			fmt.Printf("%s is logged in.\n", accountName)
-		} else {
-			fmt.Println("User is logged out.")
+			return
 		}
+
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
+		if len(memberLoginToken) != 0 && jwt.RefreshToken() {
+			redis.DelToken("LoginToken")
+			accountName := redis.GetAccountInfo("MemberAccountName")
+			fmt.Printf("%s is logged in.\n", accountName)
+			return
+		}
+
+		fmt.Println("User is logged out.")
 	},
 }
 
