@@ -120,3 +120,14 @@ func FindMember(email string) bool {
 	}
 	return true
 }
+
+func FindMembers(email, password string) (string, string, bool) {
+	db := Connect()
+	var uc UserCredentials
+	q := "SELECT emails, passwords FROM Members WHERE emails=? and passwords=?"
+	if err := db.QueryRow(q, email, password).Scan(&uc.Email, &uc.Password); err != nil {
+		return "", "", false
+	}
+
+	return uc.Email, uc.Password, true
+}

@@ -58,7 +58,32 @@ var loginCmd = &cobra.Command{
 					}
 				}
 			}
-		} else {
+		}
+
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
+		if len(memberLoginToken) == 0 {
+			totalColumns := mysql.CountTableColumns("Members")
+			redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, redisMemberFound := redis.GetCredentials(totalColumns)
+			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
+			for i := 0; i < totalColumns; i++ {
+				mysqlEmail, mysqlPassword, mysqlFound := mysql.FindMembers(loginEmail, redisMemberPassword[i])
+				for ComparePasswords(redisMemberPassword[i], []byte(loginPassword)) && ComparePasswords(mysqlPassword, []byte(loginPassword)) {
+					if redisMemberFound && jwtTokenGenerated && mysqlFound && loginEmail == mysqlEmail && loginEmail == redisMemberEmail[i] {
+						redis.SetAccountInfo("MemberLoginToken", tokenString)
+						redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[i])
+						redis.SetAccountInfo("MemberEmail", redisMemberEmail[i])
+						redis.SetAccountInfo("MemberPassword", redisMemberPassword[i])
+						fmt.Println("You're successfully logged in.")
+						break
+					} else {
+						fmt.Println(errors.New("invalid or no credentials: try out again."))
+						break
+					}
+				}
+			}
+		}
+
+		if len(loginToken) != 0 || len(memberLoginToken) != 0 {
 			fmt.Println(errors.New("You're already logged in."))
 		}
 	},

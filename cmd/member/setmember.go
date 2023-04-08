@@ -8,6 +8,7 @@ import (
 	"github.com/ibilalkayy/proctl/database/mysql"
 	"github.com/ibilalkayy/proctl/database/redis"
 	"github.com/ibilalkayy/proctl/jwt"
+	"github.com/ibilalkayy/proctl/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -27,14 +28,21 @@ var setmemCmd = &cobra.Command{
 		memberLocation, _ := cmd.Flags().GetString("location")
 		memberWorkingStatus, _ := cmd.Flags().GetString("working status")
 		memberFound := mysql.FindMember(memberEmail)
+		hashPass := middleware.HashPassword([]byte(memberPassword))
+		memberCredentials := [4]string{memberEmail, hashPass, memberFullName, memberAccountName}
 
 		if len(loginToken) == 0 && len(memberLoginToken) == 0 {
 			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 			if jwtTokenGenerated {
+				redis.SetCredentials(memberCredentials)
+				totalColumns := mysql.CountTableColumns("Members")
+				redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, _ := redis.GetCredentials(totalColumns)
 				redis.SetAccountInfo("MemberLoginToken", tokenString)
-				redis.SetAccountInfo("MemberAccountName", memberAccountName)
+				redis.SetAccountInfo("AccountEmail", redisMemberEmail[0])
+				redis.SetAccountInfo("AccountPassword", redisMemberPassword[0])
+				redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[0])
 				if memberFound && len(memberEmail) != 0 {
-					values := [7]string{memberPassword, memberFullName, memberAccountName, memberTitle, memberPhone, memberLocation, memberWorkingStatus}
+					values := [7]string{hashPass, memberFullName, memberAccountName, memberTitle, memberPhone, memberLocation, memberWorkingStatus}
 					mysql.UpdateMember(values, memberEmail)
 					fmt.Println("The member credentials are successfully updated")
 				} else {
