@@ -34,9 +34,9 @@ var setmemCmd = &cobra.Command{
 		if len(loginToken) == 0 && len(memberLoginToken) == 0 {
 			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 			if jwtTokenGenerated {
-				redis.SetCredentials(memberCredentials)
+				redis.SetMemberCredentials(memberCredentials)
 				totalColumns := mysql.CountTableColumns("Members")
-				redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, _ := redis.GetCredentials(totalColumns)
+				redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, _ := redis.GetMemberCredentials(totalColumns)
 				redis.SetAccountInfo("MemberLoginToken", tokenString)
 				redis.SetAccountInfo("AccountEmail", redisMemberEmail[0])
 				redis.SetAccountInfo("AccountPassword", redisMemberPassword[0])

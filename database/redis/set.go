@@ -22,12 +22,27 @@ func RedisConnect() *redis.Client {
 	return client
 }
 
-func SetCredentials(value [4]string) {
+func SetUserCredentials(value [4]string) {
 	client := RedisConnect()
-	insertEmails, err := client.LPush("Emails", value[0]).Result()
-	insertPasswords, err := client.LPush("Passwords", value[1]).Result()
-	insertFullName, err := client.LPush("Full Names", value[2]).Result()
-	insertAccountName, err := client.LPush("Account Names", value[3]).Result()
+	insertEmails, err := client.LPush("UserEmails", value[0]).Result()
+	insertPasswords, err := client.LPush("UserPasswords", value[1]).Result()
+	insertFullName, err := client.LPush("UserFullNames", value[2]).Result()
+	insertAccountName, err := client.LPush("UserAccountNames", value[3]).Result()
+
+	if err != nil {
+		fmt.Println(insertEmails)
+		fmt.Println(insertPasswords)
+		fmt.Println(insertFullName)
+		fmt.Println(insertAccountName)
+	}
+}
+
+func SetMemberCredentials(value [4]string) {
+	client := RedisConnect()
+	insertEmails, err := client.LPush("MemberEmails", value[0]).Result()
+	insertPasswords, err := client.LPush("MemberPasswords", value[1]).Result()
+	insertFullName, err := client.LPush("MemberFullNames", value[2]).Result()
+	insertAccountName, err := client.LPush("MemberAccountNames", value[3]).Result()
 
 	if err != nil {
 		fmt.Println(insertEmails)

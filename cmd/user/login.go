@@ -32,7 +32,7 @@ var loginCmd = &cobra.Command{
 		loginToken := redis.GetAccountInfo("LoginToken")
 		if len(loginToken) == 0 {
 			totalColumns := mysql.CountTableColumns("Signup")
-			redisSignupEmail, redisSignupPassword, redisSignupFullName, redisSignupAccountName, redisSignupFound := redis.GetCredentials(totalColumns)
+			redisSignupEmail, redisSignupPassword, redisSignupFullName, redisSignupAccountName, redisSignupFound := redis.GetUserCredentials(totalColumns)
 			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 			for i := 0; i < totalColumns; i++ {
 				mysqlEmail, mysqlPassword, mysqlStatus, mysqlFound := mysql.FindAccount(loginEmail, redisSignupPassword[i])
@@ -63,7 +63,7 @@ var loginCmd = &cobra.Command{
 		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 		if len(memberLoginToken) == 0 {
 			totalColumns := mysql.CountTableColumns("Members")
-			redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, redisMemberFound := redis.GetCredentials(totalColumns)
+			redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, redisMemberFound := redis.GetMemberCredentials(totalColumns)
 			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 			for i := 0; i < totalColumns; i++ {
 				mysqlEmail, mysqlPassword, mysqlFound := mysql.FindMembers(loginEmail, redisMemberPassword[i])

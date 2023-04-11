@@ -51,8 +51,8 @@ var signupCmd = &cobra.Command{
 				tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 				if jwtTokenGenerated {
 					totalColumns := mysql.CountTableColumns("Signup")
-					redis.SetCredentials(signupCredentials)
-					redisSignupEmail, redisSignupPassword, redisSignupFullName, redisSignupAccountName, _ := redis.GetCredentials(totalColumns)
+					redis.SetUserCredentials(signupCredentials)
+					redisSignupEmail, redisSignupPassword, redisSignupFullName, redisSignupAccountName, _ := redis.GetUserCredentials(totalColumns)
 					redis.SetAccountInfo("LoginToken", tokenString)
 					redis.SetAccountInfo("AccountName", redisSignupAccountName[0])
 					redis.SetAccountInfo("AccountFullName", redisSignupFullName[0])

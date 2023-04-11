@@ -27,7 +27,7 @@ func UpdateUser(value [4]string, email, password string) {
 		hashPass = middleware.HashPassword([]byte(value[2]))
 		redis.DelToken("LoginToken")
 		values := [4]string{redis.GetAccountInfo("AccountEmail"), hashPass, redis.GetAccountInfo("AccountFullName"), redis.GetAccountInfo("AccountName")}
-		redis.SetCredentials(values)
+		redis.SetUserCredentials(values)
 	} else {
 		hashPass = redis.GetAccountInfo("AccountPassword")
 	}
