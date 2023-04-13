@@ -30,63 +30,64 @@ var loginCmd = &cobra.Command{
 		loginPassword, _ := cmd.Flags().GetString("password")
 
 		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) == 0 {
-			totalColumns := mysql.CountTableColumns("Signup")
-			redisSignupEmail, redisSignupPassword, redisSignupFullName, redisSignupAccountName, redisSignupFound := redis.GetUserCredentials(totalColumns)
-			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
-			for i := 0; i < totalColumns; i++ {
-				mysqlEmail, mysqlPassword, mysqlStatus, mysqlFound := mysql.FindAccount(loginEmail, redisSignupPassword[i])
-				for ComparePasswords(redisSignupPassword[i], []byte(loginPassword)) && ComparePasswords(mysqlPassword, []byte(loginPassword)) {
-					if redisSignupFound && jwtTokenGenerated && mysqlFound && loginEmail == mysqlEmail && loginEmail == redisSignupEmail[i] {
-						redis.SetAccountInfo("LoginToken", tokenString)
-						redis.SetAccountInfo("AccountFullName", redisSignupFullName[i])
-						redis.SetAccountInfo("AccountName", redisSignupAccountName[i])
-						redis.SetAccountInfo("AccountEmail", redisSignupEmail[i])
-						redis.SetAccountInfo("AccountPassword", redisSignupPassword[i])
-						accountEmail := redis.GetAccountInfo("AccountEmail")
-						accountPassword := redis.GetAccountInfo("AccountPassword")
-
-						accountCode := GetRandomCode(accountEmail, accountPassword)
-						if mysqlStatus == "0" {
-							redis.SetAccountInfo("VerificationCode", accountCode)
-						}
-						fmt.Println("You're successfully logged in.")
-						break
-					} else {
-						fmt.Println(errors.New("invalid or no credentials: try out again."))
-						break
-					}
-				}
-			}
-		}
-
 		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
-		if len(memberLoginToken) == 0 {
-			totalColumns := mysql.CountTableColumns("Members")
-			redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, redisMemberFound := redis.GetMemberCredentials(totalColumns)
-			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
-			for i := 0; i < totalColumns; i++ {
-				mysqlEmail, mysqlPassword, mysqlFound := mysql.FindMembers(loginEmail, redisMemberPassword[i])
-				for ComparePasswords(redisMemberPassword[i], []byte(loginPassword)) && ComparePasswords(mysqlPassword, []byte(loginPassword)) {
-					if redisMemberFound && jwtTokenGenerated && mysqlFound && loginEmail == mysqlEmail && loginEmail == redisMemberEmail[i] {
-						redis.SetAccountInfo("MemberLoginToken", tokenString)
-						redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[i])
-						redis.SetAccountInfo("MemberEmail", redisMemberEmail[i])
-						redis.SetAccountInfo("MemberPassword", redisMemberPassword[i])
-						fmt.Println("You're successfully logged in.")
-						break
-					} else {
-						fmt.Println(errors.New("invalid or no credentials: try out again."))
-						break
-					}
-				}
-			}
-		}
 
 		if len(loginToken) != 0 || len(memberLoginToken) != 0 {
 			fmt.Println(errors.New("You're already logged in."))
 		}
+
+		if UserLogin(loginEmail, loginPassword) || MemberLogin(loginEmail, loginPassword) {
+			fmt.Println("You're successfully logged in.")
+		} else {
+			fmt.Println(errors.New("Invalid email or password"))
+		}
 	},
+}
+
+func UserLogin(email, password string) bool {
+	totalColumns := mysql.CountTableColumns("Signup")
+	redisSignupEmail, redisSignupPassword, redisSignupFullName, redisSignupAccountName, redisSignupFound := redis.GetUserCredentials(totalColumns)
+	tokenString, jwtTokenGenerated := jwt.GenerateJWT()
+	for i := 0; i < totalColumns; i++ {
+		mysqlEmail, mysqlPassword, mysqlStatus, mysqlFound := mysql.FindAccount(email, redisSignupPassword[i])
+		for ComparePasswords(redisSignupPassword[i], []byte(password)) && ComparePasswords(mysqlPassword, []byte(password)) {
+			if redisSignupFound && jwtTokenGenerated && mysqlFound && email == mysqlEmail && email == redisSignupEmail[i] {
+				redis.SetAccountInfo("LoginToken", tokenString)
+				redis.SetAccountInfo("AccountFullName", redisSignupFullName[i])
+				redis.SetAccountInfo("AccountName", redisSignupAccountName[i])
+				redis.SetAccountInfo("AccountEmail", redisSignupEmail[i])
+				redis.SetAccountInfo("AccountPassword", redisSignupPassword[i])
+				accountEmail := redis.GetAccountInfo("AccountEmail")
+				accountPassword := redis.GetAccountInfo("AccountPassword")
+
+				accountCode := GetRandomCode(accountEmail, accountPassword)
+				if mysqlStatus == "0" {
+					redis.SetAccountInfo("VerificationCode", accountCode)
+				}
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func MemberLogin(email, password string) bool {
+	totalColumns := mysql.CountTableColumns("Members")
+	redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, redisMemberFound := redis.GetMemberCredentials(totalColumns)
+	tokenString, jwtTokenGenerated := jwt.GenerateJWT()
+	for i := 0; i < totalColumns; i++ {
+		mysqlEmail, mysqlPassword, mysqlFound := mysql.FindMembers(email, redisMemberPassword[i])
+		for ComparePasswords(redisMemberPassword[i], []byte(password)) && ComparePasswords(mysqlPassword, []byte(password)) {
+			if redisMemberFound && jwtTokenGenerated && mysqlFound && email == mysqlEmail && email == redisMemberEmail[i] {
+				redis.SetAccountInfo("MemberLoginToken", tokenString)
+				redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[i])
+				redis.SetAccountInfo("MemberEmail", redisMemberEmail[i])
+				redis.SetAccountInfo("MemberPassword", redisMemberPassword[i])
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func init() {
