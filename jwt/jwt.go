@@ -25,13 +25,23 @@ func GenerateJWT() (string, bool) {
 	return tokenString, true
 }
 
-func RefreshToken() bool {
+func RefreshToken(tokenType string) bool {
+	var tokenKey string
+	switch tokenType {
+	case "user":
+		tokenKey = "LoginToken"
+	case "member":
+		tokenKey = "MemberLoginToken"
+	default:
+		return false
+	}
+
 	if time.Until(time.Now().Add(time.Duration(jwt.StandardClaims{}.ExpiresAt))) > 30*time.Second {
 		return false
 	} else {
 		tokenString, ok := GenerateJWT()
 		if ok {
-			redis.SetAccountInfo("LoginToken", tokenString)
+			redis.SetAccountInfo(tokenKey, tokenString)
 			return true
 		} else {
 			return false

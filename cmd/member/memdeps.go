@@ -16,7 +16,7 @@ var memdepsCmd = &cobra.Command{
 	Short: "Show the deparments of a member",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			roles := [12]string{" Sales & CRM", " Legal", " HR & Recruiting", " Marketing", " Software Development", " Finance", " Education", " Operations", " Product Management", "Construction", "Nonprofits", "IT"}
 			fmt.Println("Following are the departments")
 

@@ -16,7 +16,7 @@ var memrolesCmd = &cobra.Command{
 	Short: "Show the roles of a member",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			roles := [4]string{"Business Owner", "Team Leader", "Team Member", "Freelancer"}
 			fmt.Println("Following are the roles")
 

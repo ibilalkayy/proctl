@@ -18,7 +18,7 @@ var verifyCmd = &cobra.Command{
 	Short: "Check verification of a user",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			AccountName := redis.GetAccountInfo("AccountName")
 			AccountFullName := redis.GetAccountInfo("AccountFullName")
 			AccountEmail := redis.GetAccountInfo("AccountEmail")

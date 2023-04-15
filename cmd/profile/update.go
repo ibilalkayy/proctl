@@ -31,7 +31,7 @@ var updateCmd = &cobra.Command{
 
 		_, _, mysqlStatus, _ := mysql.FindAccount(accountEmail, accountPassword)
 
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			updateProfile := len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0
 			updateUser := len(profileFullName) != 0 || len(profileAccountName) != 0 || len(profilePassword) != 0
 

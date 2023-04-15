@@ -29,7 +29,7 @@ var invitememCmd = &cobra.Command{
 		getVerificationCode := user.GetRandomCode(inviteWorkspaceEmail, inviteWorkspaceEmail)
 		workspaceName := mysql.FindWorkspace(accountEmail)
 
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			if len(workspaceName) != 0 {
 				values := [5]string{"member-template", accountName, getVerificationCode, inviteWorkspaceEmail, accountName + " has invited you to collaborate on the proctl project"}
 				email.Verify(values)

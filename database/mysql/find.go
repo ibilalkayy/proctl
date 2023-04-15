@@ -98,7 +98,12 @@ func FindWorkspace(email string) string {
 
 		names = append(names, name)
 	}
-	return strings.Join(names, "\n")
+	listOfName := strings.Join(names, "\n")
+	if len(listOfName) != 0 {
+		return listOfName
+	} else {
+		return "This account has no workspaces"
+	}
 }
 
 func FindWorkspaceName(email, name string) string {

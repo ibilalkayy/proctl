@@ -23,7 +23,7 @@ var renamespaceCmd = &cobra.Command{
 		foundWorkspaceName := mysql.FindWorkspaceName(accountEmail, oldWorkspaceName)
 		values := [3]string{newWorkspaceName, accountEmail, oldWorkspaceName}
 
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			if oldWorkspaceName == foundWorkspaceName {
 				mysql.UpdateWorkspace(values)
 				fmt.Println("Your workspace is successfully renamed")

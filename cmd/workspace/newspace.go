@@ -21,7 +21,7 @@ var newspaceCmd = &cobra.Command{
 		values := [2]string{accountEmail, newWorkspaceName}
 		loginToken := redis.GetAccountInfo("LoginToken")
 
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			oldWorkspaceName := mysql.FindWorkspaceName(accountEmail, newWorkspaceName)
 			if oldWorkspaceName == newWorkspaceName {
 				fmt.Println(errors.New("The workspace name is already present. Please try another one"))

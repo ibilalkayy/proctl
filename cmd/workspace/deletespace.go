@@ -22,7 +22,7 @@ var deletespaceCmd = &cobra.Command{
 		values := [2]string{accountEmail, deleteWorkspaceName}
 		oldWorkspaceName := mysql.FindWorkspaceName(accountEmail, deleteWorkspaceName)
 
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			if deleteWorkspaceName == oldWorkspaceName {
 				mysql.DeleteWorkspace(values)
 				fmt.Println("Your workspace is successfully deleted")

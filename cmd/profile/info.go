@@ -19,7 +19,7 @@ var infoCmd = &cobra.Command{
 		loginToken := redis.GetAccountInfo("LoginToken")
 		accountEmail := redis.GetAccountInfo("AccountEmail")
 		accountPassword := redis.GetAccountInfo("AccountPassword")
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			mysql.ListUserInfo(accountEmail, accountPassword)
 			mysql.ListProfileInfo(accountEmail)
 		} else {

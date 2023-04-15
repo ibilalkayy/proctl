@@ -24,7 +24,7 @@ var addCmd = &cobra.Command{
 		loginToken := redis.GetAccountInfo("LoginToken")
 		AccountEmail := redis.GetAccountInfo("AccountEmail")
 		profileFound := mysql.FindProfile(AccountEmail)
-		if len(loginToken) != 0 && jwt.RefreshToken() {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			if (len(profileTitle) != 0 || len(profilePhone) != 0 || len(profileLocation) != 0 || len(profileWorkingStatus) != 0) && !profileFound {
 				profileData := [5]string{AccountEmail, profileTitle, profilePhone, profileLocation, profileWorkingStatus}
 				redis.SetAccountInfo("ProfileTitle", profileTitle)
