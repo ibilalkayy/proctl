@@ -18,19 +18,27 @@ var deletespaceCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteWorkspaceName, _ := cmd.Flags().GetString("name")
 		accountEmail := redis.GetAccountInfo("AccountEmail")
+		memberEmail := redis.GetAccountInfo("MemberEmail")
 		loginToken := redis.GetAccountInfo("LoginToken")
-		values := [2]string{accountEmail, deleteWorkspaceName}
-		oldWorkspaceName := mysql.FindWorkspaceName(accountEmail, deleteWorkspaceName)
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 
+		var email string
 		if len(loginToken) != 0 && jwt.RefreshToken("user") {
-			if deleteWorkspaceName == oldWorkspaceName {
-				mysql.DeleteWorkspace(values)
-				fmt.Println("Your workspace is successfully deleted")
-			} else {
-				fmt.Println(errors.New("A workspace is not present by this name"))
-			}
+			email = accountEmail
+		} else if len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
+			email = memberEmail
 		} else {
 			fmt.Println(errors.New("First login to delete a workspace"))
+		}
+
+		values := [2]string{email, deleteWorkspaceName}
+		oldWorkspaceName := mysql.FindWorkspaceName(email, deleteWorkspaceName)
+
+		if deleteWorkspaceName == oldWorkspaceName {
+			mysql.DeleteWorkspace(values)
+			fmt.Println("Your workspace is successfully deleted")
+		} else {
+			fmt.Println(errors.New("A workspace is not present by this name"))
 		}
 	},
 }

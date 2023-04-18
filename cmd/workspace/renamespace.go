@@ -20,18 +20,26 @@ var renamespaceCmd = &cobra.Command{
 		newWorkspaceName, _ := cmd.Flags().GetString("newname")
 		accountEmail := redis.GetAccountInfo("AccountEmail")
 		loginToken := redis.GetAccountInfo("LoginToken")
-		foundWorkspaceName := mysql.FindWorkspaceName(accountEmail, oldWorkspaceName)
-		values := [3]string{newWorkspaceName, accountEmail, oldWorkspaceName}
+		memberEmail := redis.GetAccountInfo("MemberEmail")
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 
+		var email string
 		if len(loginToken) != 0 && jwt.RefreshToken("user") {
-			if oldWorkspaceName == foundWorkspaceName {
-				mysql.UpdateWorkspace(values)
-				fmt.Println("Your workspace is successfully renamed")
-			} else {
-				fmt.Println(errors.New("A workspace is not present by this name"))
-			}
+			email = accountEmail
+		} else if len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
+			email = memberEmail
 		} else {
 			fmt.Println(errors.New("First login to rename a workspace"))
+		}
+
+		foundWorkspaceName := mysql.FindWorkspaceName(email, oldWorkspaceName)
+		values := [3]string{newWorkspaceName, email, oldWorkspaceName}
+
+		if oldWorkspaceName == foundWorkspaceName {
+			mysql.UpdateWorkspace(values)
+			fmt.Println("Your workspace is successfully renamed")
+		} else {
+			fmt.Println(errors.New("A workspace is not present by this name"))
 		}
 	},
 }
