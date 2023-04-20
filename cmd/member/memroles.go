@@ -13,10 +13,11 @@ import (
 // memrolesCmd represents the memroles command
 var memrolesCmd = &cobra.Command{
 	Use:   "memroles",
-	Short: "Show the roles of a member",
+	Short: "Show the roles of a member and the admin",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) != 0 && jwt.RefreshToken("user") {
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
+		if (len(loginToken) != 0 && jwt.RefreshToken("user")) || (len(memberLoginToken) != 0 && jwt.RefreshToken("member")) {
 			roles := [4]string{"Business Owner", "Team Leader", "Team Member", "Freelancer"}
 			fmt.Println("Following are the roles")
 

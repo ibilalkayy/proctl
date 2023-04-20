@@ -19,18 +19,23 @@ var checkCmd = &cobra.Command{
 		checkEmail, _ := cmd.Flags().GetString("email")
 		loginToken := redis.GetAccountInfo("LoginToken")
 		var verificationCode string
+		memberChecking, _ := mysql.FindMember(checkEmail)
 
 		if len(loginToken) == 0 {
 			if len(checkEmail) != 0 {
-				fmt.Printf("Enter the verification code: ")
-				fmt.Scanln(&verificationCode)
+				if len(memberChecking) == 0 {
+					fmt.Printf("Enter the verification code: ")
+					fmt.Scanln(&verificationCode)
 
-				getVerificationCode := user.GetRandomCode(checkEmail, checkEmail)
-				if len(verificationCode) != 0 && getVerificationCode == verificationCode {
-					mysql.InsertMemberData(checkEmail)
-					fmt.Println("Your account is successfully verified")
+					getVerificationCode := user.GetRandomCode(checkEmail, checkEmail)
+					if len(verificationCode) != 0 && getVerificationCode == verificationCode {
+						mysql.InsertMemberData(checkEmail)
+						fmt.Println("Your account is successfully verified")
+					} else {
+						fmt.Println(errors.New("Please enter the correct verification code"))
+					}
 				} else {
-					fmt.Println(errors.New("Please enter the correct verification code"))
+					fmt.Println(errors.New("Your account is already verified"))
 				}
 			} else {
 				fmt.Println(errors.New("Please put the email address or type 'proctl check --help' for help"))

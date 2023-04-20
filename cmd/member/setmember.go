@@ -27,7 +27,7 @@ var setmemCmd = &cobra.Command{
 		memberPhone, _ := cmd.Flags().GetString("phone")
 		memberLocation, _ := cmd.Flags().GetString("location")
 		memberWorkingStatus, _ := cmd.Flags().GetString("working status")
-		memberFound := mysql.FindMember(memberEmail)
+		_, memberFound := mysql.FindMember(memberEmail)
 		hashPass := middleware.HashPassword([]byte(memberPassword))
 		memberCredentials := [4]string{memberEmail, hashPass, memberFullName, memberAccountName}
 

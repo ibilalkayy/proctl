@@ -13,10 +13,11 @@ import (
 // memdepsCmd represents the memdeps command
 var memdepsCmd = &cobra.Command{
 	Use:   "memdeps",
-	Short: "Show the deparments of a member",
+	Short: "Show the deparments of a member and the admin",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
-		if len(loginToken) != 0 && jwt.RefreshToken("user") {
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
+		if (len(loginToken) != 0 && jwt.RefreshToken("user")) || (len(memberLoginToken) != 0 && jwt.RefreshToken("member")) {
 			roles := [12]string{" Sales & CRM", " Legal", " HR & Recruiting", " Marketing", " Software Development", " Finance", " Education", " Operations", " Product Management", "Construction", "Nonprofits", "IT"}
 			fmt.Println("Following are the departments")
 
