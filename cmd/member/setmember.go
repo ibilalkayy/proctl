@@ -17,39 +17,40 @@ var setmemCmd = &cobra.Command{
 	Use:   "setmem",
 	Short: "Setup the member credentials",
 	Run: func(cmd *cobra.Command, args []string) {
-		loginToken := redis.GetAccountInfo("LoginToken")
-		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 		memberEmail, _ := cmd.Flags().GetString("email")
 		memberPassword, _ := cmd.Flags().GetString("password")
 		memberFullName, _ := cmd.Flags().GetString("full name")
 		memberAccountName, _ := cmd.Flags().GetString("account name")
-		memberTitle, _ := cmd.Flags().GetString("title")
-		memberPhone, _ := cmd.Flags().GetString("phone")
-		memberLocation, _ := cmd.Flags().GetString("location")
-		memberWorkingStatus, _ := cmd.Flags().GetString("working status")
+
+		loginToken := redis.GetAccountInfo("LoginToken")
+		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 		_, memberFound := mysql.FindMember(memberEmail)
 		hashPass := middleware.HashPassword([]byte(memberPassword))
 		memberCredentials := [4]string{memberEmail, hashPass, memberFullName, memberAccountName}
 
 		if len(loginToken) == 0 && len(memberLoginToken) == 0 {
 			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
-			if jwtTokenGenerated {
-				redis.SetMemberCredentials(memberCredentials)
-				totalColumns := mysql.CountTableColumns("Members")
-				redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, _ := redis.GetMemberCredentials(totalColumns)
-				redis.SetAccountInfo("MemberLoginToken", tokenString)
-				redis.SetAccountInfo("AccountEmail", redisMemberEmail[0])
-				redis.SetAccountInfo("AccountPassword", redisMemberPassword[0])
-				redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[0])
-				if memberFound && len(memberEmail) != 0 {
-					values := [7]string{hashPass, memberFullName, memberAccountName, memberTitle, memberPhone, memberLocation, memberWorkingStatus}
-					mysql.UpdateMember(values, memberEmail)
-					fmt.Println("The member credentials are successfully updated")
+			if len(memberEmail) != 0 && len(memberPassword) != 0 && len(memberFullName) != 0 && len(memberAccountName) != 0 {
+				if jwtTokenGenerated {
+					redis.SetMemberCredentials(memberCredentials)
+					totalColumns := mysql.CountTableColumns("Members")
+					redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, _ := redis.GetMemberCredentials(totalColumns)
+					redis.SetAccountInfo("MemberLoginToken", tokenString)
+					redis.SetAccountInfo("AccountEmail", redisMemberEmail[0])
+					redis.SetAccountInfo("AccountPassword", redisMemberPassword[0])
+					redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[0])
+					if memberFound {
+						values := [3]string{hashPass, memberFullName, memberAccountName}
+						mysql.SetMember(values, memberEmail)
+						fmt.Println("The member credentials are successfully updated")
+					} else {
+						fmt.Println(errors.New("Please enter the email address or type 'proctl setmem --help'"))
+					}
 				} else {
-					fmt.Println(errors.New("Please enter the email address or type 'proctl setmem --help'"))
+					fmt.Println(errors.New("Failure in setting up a member"))
 				}
 			} else {
-				fmt.Println(errors.New("Failure in setting up a member"))
+				fmt.Println(errors.New("All the required credentials are not entered"))
 			}
 		} else {
 			fmt.Println(errors.New("First logout to setup the member credentials"))
@@ -63,8 +64,4 @@ func init() {
 	setmemCmd.Flags().StringP("password", "p", "", "Specify a password to setup the credentials")
 	setmemCmd.Flags().StringP("full name", "f", "", "Specify a full name to setup the credentials")
 	setmemCmd.Flags().StringP("account name", "a", "", "Specify an account name to setup the credentials")
-	setmemCmd.Flags().StringP("title", "t", "", "Specify an account title to setup the credentials")
-	setmemCmd.Flags().StringP("phone", "n", "", "Specify an account phone number to setup the credentials")
-	setmemCmd.Flags().StringP("location", "l", "", "Specify an account location to setup the credentials")
-	setmemCmd.Flags().StringP("working status", "w", "", "Specify an account working status to setup the credentials")
 }

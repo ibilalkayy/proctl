@@ -93,7 +93,7 @@ func UpdateWorkspace(value [3]string) {
 	}
 }
 
-func UpdateMember(value [7]string, email string) {
+func SetMember(value [3]string, email string) {
 	if len(value) == 0 && len(email) == 0 {
 		return
 	}
@@ -111,14 +111,6 @@ func UpdateMember(value [7]string, email string) {
 				q += "fullnames=?, "
 			case 2:
 				q += "accountnames=?, "
-			case 3:
-				q += "titles=?, "
-			case 4:
-				q += "phones=?, "
-			case 5:
-				q += "locations=?, "
-			case 6:
-				q += "working_statuses=?, "
 			}
 			updateValues = append(updateValues, value[i])
 		}
@@ -126,6 +118,43 @@ func UpdateMember(value [7]string, email string) {
 
 	q += "is_active=? WHERE emails=?"
 	updateValues = append(updateValues, "1", email)
+
+	update, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer update.Close()
+
+	_, err = update.Exec(updateValues...)
+	middleware.HandleError(err)
+}
+
+func UpdateMember(value [4]string, email, password string) {
+	if len(value) == 0 && len(email) == 0 && len(password) == 0 {
+		return
+	}
+
+	db := Connect()
+	q := "UPDATE Members SET "
+	var updateValues []interface{}
+
+	for i := 0; i < len(value); i++ {
+		if len(value[i]) != 0 {
+			switch i {
+			case 0:
+				q += "titles=?, "
+			case 1:
+				q += "phones=?, "
+			case 2:
+				q += "locations=?, "
+			case 3:
+				q += "working_statuses=?, "
+			}
+			updateValues = append(updateValues, value[i])
+		}
+	}
+
+	q += "is_active=? WHERE emails=? AND passwords=?"
+	updateValues = append(updateValues, "1", email, password)
 
 	update, err := db.Prepare(q)
 	middleware.HandleError(err)
