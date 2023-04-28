@@ -36,13 +36,13 @@ var setmemCmd = &cobra.Command{
 					totalColumns := mysql.CountTableColumns("Members")
 					redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, _ := redis.GetMemberCredentials(totalColumns)
 					redis.SetAccountInfo("MemberLoginToken", tokenString)
-					redis.SetAccountInfo("AccountEmail", redisMemberEmail[0])
-					redis.SetAccountInfo("AccountPassword", redisMemberPassword[0])
+					redis.SetAccountInfo("MemberAccountEmail", redisMemberEmail[0])
+					redis.SetAccountInfo("MemberAccountPassword", redisMemberPassword[0])
 					redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[0])
 					if memberFound {
 						values := [3]string{hashPass, memberFullName, memberAccountName}
 						mysql.SetMember(values, memberEmail)
-						fmt.Println("The member credentials are successfully updated")
+						fmt.Println("You have successfully setup the member credentials")
 					} else {
 						fmt.Println(errors.New("Please enter the email address or type 'proctl setmem --help'"))
 					}
@@ -50,7 +50,7 @@ var setmemCmd = &cobra.Command{
 					fmt.Println(errors.New("Failure in setting up a member"))
 				}
 			} else {
-				fmt.Println(errors.New("All the required credentials are not entered"))
+				fmt.Println(errors.New("The required credentials are not entered"))
 			}
 		} else {
 			fmt.Println(errors.New("First logout to setup the member credentials"))
