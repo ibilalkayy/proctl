@@ -24,7 +24,7 @@ var setmemCmd = &cobra.Command{
 
 		loginToken := redis.GetAccountInfo("LoginToken")
 		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
-		_, memberFound := mysql.FindMember(memberEmail)
+		_, memberFound := mysql.FindMember(memberEmail, "")
 		hashPass := middleware.HashPassword([]byte(memberPassword))
 		memberCredentials := [4]string{memberEmail, hashPass, memberFullName, memberAccountName}
 

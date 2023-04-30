@@ -25,7 +25,7 @@ var updatememCmd = &cobra.Command{
 		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 		memberAccountEmail := redis.GetAccountInfo("MemberAccountEmail")
 		memberAccountPassword := redis.GetAccountInfo("MemberAccountPassword")
-		_, _, memberFound := mysql.FindMembers(memberAccountEmail, memberAccountPassword)
+		_, memberFound := mysql.FindMember(memberAccountEmail, memberAccountPassword)
 
 		if len(loginToken) != 0 && jwt.RefreshToken("user") && memberFound {
 			fmt.Println(errors.New("Can't update the member credentials as an admin user"))

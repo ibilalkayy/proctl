@@ -19,11 +19,11 @@ var checkCmd = &cobra.Command{
 		checkEmail, _ := cmd.Flags().GetString("email")
 		loginToken := redis.GetAccountInfo("LoginToken")
 		var verificationCode string
-		memberChecking, _ := mysql.FindMember(checkEmail)
+		memberStatus, _ := mysql.FindMember(checkEmail, "")
 
 		if len(loginToken) == 0 {
 			if len(checkEmail) != 0 {
-				if len(memberChecking) == 0 {
+				if len(memberStatus[2]) == 0 {
 					fmt.Printf("Enter the verification code: ")
 					fmt.Scanln(&verificationCode)
 
