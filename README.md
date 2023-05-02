@@ -50,6 +50,8 @@ We’d love to hear your thoughts on this project. Feel free to drop us a note!
 
 - [LinkedIn](https://www.linkedin.com/in/ibilalkayy/)
 
+- [Hashnode](https://hashnode.com/@ibilalkayy)
+
 ## License
 
 - [Apache-2.0 license](https://raw.githubusercontent.com/ibilalkayy/proctl/master/LICENSE)
