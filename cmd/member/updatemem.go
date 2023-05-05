@@ -31,7 +31,7 @@ var updatememCmd = &cobra.Command{
 			fmt.Println(errors.New("Can't update the member credentials as an admin user"))
 		} else if len(memberLoginToken) != 0 && jwt.RefreshToken("member") && memberFound {
 			memberValues := [4]string{memberTitle, memberPhone, memberLocation, memberWorkingStatus}
-			mysql.UpdateMember(memberValues, memberAccountEmail, memberAccountPassword)
+			mysql.UpdateMember(memberValues, memberAccountEmail, memberAccountPassword, false)
 			fmt.Println("You have successfully updated the member credentials")
 		} else {
 			fmt.Println(errors.New("First login to update the member credentials"))

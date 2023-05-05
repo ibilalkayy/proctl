@@ -93,8 +93,8 @@ func UpdateWorkspace(value [3]string) {
 	}
 }
 
-func SetMember(value [3]string, email string) {
-	if len(value) == 0 && len(email) == 0 {
+func UpdateMember(value [4]string, email, password string, isSet bool) {
+	if len(value) == 0 && len(email) == 0 && (len(password) == 0 || isSet) {
 		return
 	}
 
@@ -104,57 +104,38 @@ func SetMember(value [3]string, email string) {
 
 	for i := 0; i < len(value); i++ {
 		if len(value[i]) != 0 {
-			switch i {
-			case 0:
-				q += "passwords=?, "
-			case 1:
-				q += "fullnames=?, "
-			case 2:
-				q += "accountnames=?, "
+			if isSet {
+				switch i {
+				case 0:
+					q += "passwords=?, "
+				case 1:
+					q += "fullnames=?, "
+				case 2:
+					q += "accountnames=?, "
+				}
+			} else {
+				switch i {
+				case 0:
+					q += "titles=?, "
+				case 1:
+					q += "phones=?, "
+				case 2:
+					q += "locations=?, "
+				case 3:
+					q += "working_statuses=?, "
+				}
 			}
 			updateValues = append(updateValues, value[i])
 		}
 	}
 
 	q += "is_active=? WHERE emails=?"
-	updateValues = append(updateValues, "1", email)
-
-	update, err := db.Prepare(q)
-	middleware.HandleError(err)
-
-	defer update.Close()
-
-	_, err = update.Exec(updateValues...)
-	middleware.HandleError(err)
-}
-
-func UpdateMember(value [4]string, email, password string) {
-	if len(value) == 0 && len(email) == 0 && len(password) == 0 {
-		return
+	if !isSet {
+		q += " AND passwords=?"
+		updateValues = append(updateValues, "1", email, password)
+	} else {
+		updateValues = append(updateValues, "1", email)
 	}
-
-	db := Connect()
-	q := "UPDATE Members SET "
-	var updateValues []interface{}
-
-	for i := 0; i < len(value); i++ {
-		if len(value[i]) != 0 {
-			switch i {
-			case 0:
-				q += "titles=?, "
-			case 1:
-				q += "phones=?, "
-			case 2:
-				q += "locations=?, "
-			case 3:
-				q += "working_statuses=?, "
-			}
-			updateValues = append(updateValues, value[i])
-		}
-	}
-
-	q += "is_active=? WHERE emails=? AND passwords=?"
-	updateValues = append(updateValues, "1", email, password)
 
 	update, err := db.Prepare(q)
 	middleware.HandleError(err)

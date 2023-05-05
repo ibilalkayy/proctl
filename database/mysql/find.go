@@ -116,20 +116,20 @@ func FindWorkspaceName(email, name string) string {
 	return Name
 }
 
-func FindMember(email, password string) ([3]string, bool) {
+func FindMember(email, password string) ([5]string, bool) {
 	db := Connect()
 	var uc UserCredentials
-	q := "SELECT emails, passwords, is_active FROM Members WHERE emails=?"
+	q := "SELECT emails, passwords, fullnames, accountnames, is_active FROM Members WHERE emails=?"
 	args := []interface{}{email}
 	if password != "" {
 		q += " AND passwords=?"
 		args = append(args, password)
 	}
-	if err := db.QueryRow(q, args...).Scan(&uc.Email, &uc.Password, &uc.Status); err != nil {
-		return [3]string{}, false
+	if err := db.QueryRow(q, args...).Scan(&uc.Email, &uc.Password, &uc.FullName, &uc.AccountName, &uc.Status); err != nil {
+		return [5]string{}, false
 	}
 
-	memberCredentials := [3]string{uc.Email, "", uc.Status}
+	memberCredentials := [5]string{uc.Email, "", uc.FullName, uc.AccountName, uc.Status}
 	if password != "" {
 		memberCredentials[1] = uc.Password
 	}
