@@ -81,8 +81,8 @@ func MemberLogin(email, password string) bool {
 			if redisMemberFound && jwtTokenGenerated && mysqlFound && email == mysqlCred[0] && email == redisMemberEmail[i] {
 				redis.SetAccountInfo("MemberLoginToken", tokenString)
 				redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[i])
-				redis.SetAccountInfo("MemberEmail", redisMemberEmail[i])
-				redis.SetAccountInfo("MemberPassword", redisMemberPassword[i])
+				redis.SetAccountInfo("MemberAccountEmail", redisMemberEmail[i])
+				redis.SetAccountInfo("MemberAccountPassword", redisMemberPassword[i])
 				return true
 			}
 		}

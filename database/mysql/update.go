@@ -93,7 +93,7 @@ func UpdateWorkspace(value [3]string) {
 	}
 }
 
-func UpdateMember(value [4]string, email, password string, isSet bool) {
+func UpdateMember(value [8]string, email, password string, isSet bool) {
 	if len(value) == 0 && len(email) == 0 && (len(password) == 0 || isSet) {
 		return
 	}
@@ -101,6 +101,7 @@ func UpdateMember(value [4]string, email, password string, isSet bool) {
 	db := Connect()
 	q := "UPDATE Members SET "
 	var updateValues []interface{}
+	var hashPass string
 
 	for i := 0; i < len(value); i++ {
 		if len(value[i]) != 0 {
@@ -113,19 +114,45 @@ func UpdateMember(value [4]string, email, password string, isSet bool) {
 				case 2:
 					q += "accountnames=?, "
 				}
+				updateValues = append(updateValues, value[i])
 			} else {
 				switch i {
 				case 0:
-					q += "titles=?, "
+					q += "emails=?, "
+					redis.SetAccountInfo("MemberAccountEmail", value[0])
+					redis.DelToken("MemberLoginToken")
+					values := [3]string{value[0], redis.GetAccountInfo("MemberAccountPassword"), redis.GetAccountInfo("MemberAccountName")}
+					redis.SetMemberCredentials(values)
 				case 1:
-					q += "phones=?, "
+					q += "passwords=?, "
+					hashPass = middleware.HashPassword([]byte(value[1]))
+					redis.SetAccountInfo("MemberAccountPassword", hashPass)
+					redis.DelToken("MemberLoginToken")
+					values := [3]string{redis.GetAccountInfo("MemberAccountEmail"), hashPass, redis.GetAccountInfo("MemberAccountName")}
+					redis.SetMemberCredentials(values)
 				case 2:
-					q += "locations=?, "
+					q += "fullnames=?, "
 				case 3:
+					q += "accountnames=?, "
+					redis.SetAccountInfo("MemberAccountName", value[3])
+					redis.DelToken("MemberLoginToken")
+					values := [3]string{redis.GetAccountInfo("MemberAccountEmail"), redis.GetAccountInfo("MemberAccountPassword"), value[3]}
+					redis.SetMemberCredentials(values)
+				case 4:
+					q += "titles=?, "
+				case 5:
+					q += "phones=?, "
+				case 6:
+					q += "locations=?, "
+				case 7:
 					q += "working_statuses=?, "
 				}
+				if i != 1 {
+					updateValues = append(updateValues, value[i])
+				} else {
+					updateValues = append(updateValues, hashPass)
+				}
 			}
-			updateValues = append(updateValues, value[i])
 		}
 	}
 

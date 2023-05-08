@@ -26,7 +26,7 @@ var setmemCmd = &cobra.Command{
 		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 		memberCred, memberFound := mysql.FindMember(memberEmail, "")
 		hashPass := middleware.HashPassword([]byte(memberPassword))
-		memberCredentials := [4]string{memberEmail, hashPass, memberFullName, memberAccountName}
+		memberCredentials := [3]string{memberEmail, hashPass, memberAccountName}
 
 		if len(loginToken) == 0 && len(memberLoginToken) == 0 {
 			tokenString, jwtTokenGenerated := jwt.GenerateJWT()
@@ -41,7 +41,7 @@ var setmemCmd = &cobra.Command{
 						redis.SetAccountInfo("MemberAccountPassword", redisMemberPassword[0])
 						redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[0])
 						if memberFound {
-							values := [4]string{hashPass, memberFullName, memberAccountName, ""}
+							values := [8]string{hashPass, memberFullName, memberAccountName, "", "", "", "", ""}
 							mysql.UpdateMember(values, memberEmail, "", true)
 							fmt.Println("You have successfully setup the member credentials")
 						} else {

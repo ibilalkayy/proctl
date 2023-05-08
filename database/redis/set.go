@@ -37,17 +37,15 @@ func SetUserCredentials(value [4]string) {
 	}
 }
 
-func SetMemberCredentials(value [4]string) {
+func SetMemberCredentials(value [3]string) {
 	client := RedisConnect()
 	insertEmails, err := client.LPush("MemberEmails", value[0]).Result()
 	insertPasswords, err := client.LPush("MemberPasswords", value[1]).Result()
-	insertFullName, err := client.LPush("MemberFullNames", value[2]).Result()
-	insertAccountName, err := client.LPush("MemberAccountNames", value[3]).Result()
+	insertAccountName, err := client.LPush("MemberAccountNames", value[2]).Result()
 
 	if err != nil {
 		fmt.Println(insertEmails)
 		fmt.Println(insertPasswords)
-		fmt.Println(insertFullName)
 		fmt.Println(insertAccountName)
 	}
 }
