@@ -135,7 +135,6 @@ func UpdateMember(value [8]string, email, password string, isSet bool) {
 				case 3:
 					q += "accountnames=?, "
 					redis.SetAccountInfo("MemberAccountName", value[3])
-					redis.DelToken("MemberLoginToken")
 					values := [3]string{redis.GetAccountInfo("MemberAccountEmail"), redis.GetAccountInfo("MemberAccountPassword"), value[3]}
 					redis.SetMemberCredentials(values)
 				case 4:

@@ -73,14 +73,13 @@ func UserLogin(email, password string) bool {
 
 func MemberLogin(email, password string) bool {
 	totalColumns := mysql.CountTableColumns("Members")
-	redisMemberEmail, redisMemberPassword, _, redisMemberAccountName, redisMemberFound := redis.GetMemberCredentials(totalColumns)
+	redisMemberEmail, redisMemberPassword, _, redisMemberFound := redis.GetMemberCredentials(totalColumns)
 	tokenString, jwtTokenGenerated := jwt.GenerateJWT()
 	for i := 0; i < totalColumns; i++ {
 		mysqlCred, mysqlFound := mysql.FindMember(email, redisMemberPassword[i])
 		for ComparePasswords(redisMemberPassword[i], []byte(password)) && ComparePasswords(mysqlCred[1], []byte(password)) {
 			if redisMemberFound && jwtTokenGenerated && mysqlFound && email == mysqlCred[0] && email == redisMemberEmail[i] {
 				redis.SetAccountInfo("MemberLoginToken", tokenString)
-				redis.SetAccountInfo("MemberAccountName", redisMemberAccountName[i])
 				redis.SetAccountInfo("MemberAccountEmail", redisMemberEmail[i])
 				redis.SetAccountInfo("MemberAccountPassword", redisMemberPassword[i])
 				return true
