@@ -25,6 +25,9 @@ var logoutCmd = &cobra.Command{
 			if choice == "Y" || choice == "y" {
 				redis.DelToken("LoginToken")
 				redis.DelToken("MemberLoginToken")
+				redis.DelToken("MemberAccountEmail")
+				redis.DelToken("MemberAccountPassword")
+				redis.DelToken("MemberAccountName")
 				fmt.Println("You're successfully logged out.")
 			} else if choice == "N" || choice == "n" {
 				fmt.Println("You're not logged out.")
