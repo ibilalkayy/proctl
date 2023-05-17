@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/ibilalkayy/proctl/middleware"
@@ -116,20 +117,24 @@ func FindWorkspaceName(email, name string) string {
 	return Name
 }
 
-func FindMember(email, password string) ([5]string, bool) {
+func FindMember(email, password string) ([4]string, bool) {
 	db := Connect()
 	var uc UserCredentials
-	q := "SELECT emails, passwords, fullnames, accountnames, is_active FROM Members WHERE emails=?"
+	q := "SELECT emails, passwords, fullnames, accountnames FROM Members WHERE emails=?"
 	args := []interface{}{email}
 	if password != "" {
 		q += " AND passwords=?"
 		args = append(args, password)
 	}
-	if err := db.QueryRow(q, args...).Scan(&uc.Email, &uc.Password, &uc.FullName, &uc.AccountName, &uc.Status); err != nil {
-		return [5]string{}, false
+	if err := db.QueryRow(q, args...).Scan(&uc.Email, &uc.Password, &uc.FullName, &uc.AccountName); err != nil {
+		if err == sql.ErrNoRows {
+			return [4]string{}, false
+		} else {
+			log.Fatal(err)
+		}
 	}
 
-	memberCredentials := [5]string{uc.Email, "", uc.FullName, uc.AccountName, uc.Status}
+	memberCredentials := [4]string{uc.Email, "", uc.FullName, uc.AccountName}
 	if password != "" {
 		memberCredentials[1] = uc.Password
 	}
