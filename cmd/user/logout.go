@@ -24,6 +24,10 @@ var logoutCmd = &cobra.Command{
 
 			if choice == "Y" || choice == "y" {
 				redis.DelToken("LoginToken")
+				redis.DelToken("AccountEmail")
+				redis.DelToken("AccountPassword")
+				redis.DelToken("AccountName")
+
 				redis.DelToken("MemberLoginToken")
 				redis.DelToken("MemberAccountEmail")
 				redis.DelToken("MemberAccountPassword")

@@ -83,3 +83,31 @@ func InsertMemberData(email string) {
 		middleware.HandleError(err)
 	}
 }
+
+func InsertDepartment(email, department string) {
+	db := CreateTable(4)
+	q := "INSERT INTO Departments(emails, departments) VALUES(?, ?)"
+	insert, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer insert.Close()
+
+	if len(email) != 0 {
+		_, err := insert.Exec(email, department)
+		middleware.HandleError(err)
+	}
+}
+
+func InsertRole(email, role string) {
+	db := CreateTable(5)
+	q := "INSERT INTO Roles(emails, roles) VALUES(?, ?)"
+	insert, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer insert.Close()
+
+	if len(email) != 0 {
+		_, err := insert.Exec(email, role)
+		middleware.HandleError(err)
+	}
+}

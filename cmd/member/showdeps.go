@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// memdepsCmd represents the memdeps command
-var memdepsCmd = &cobra.Command{
-	Use:   "memdeps",
+// showdepsCmd represents the showdeps command
+var showdepsCmd = &cobra.Command{
+	Use:   "showdeps",
 	Short: "Show the deparments of a member and the admin",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
@@ -33,5 +33,5 @@ var memdepsCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(memdepsCmd)
+	cmd.RootCmd.AddCommand(showdepsCmd)
 }
