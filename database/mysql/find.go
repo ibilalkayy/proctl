@@ -140,3 +140,25 @@ func FindMember(email, password string) ([4]string, bool) {
 	}
 	return memberCredentials, true
 }
+
+func FindDepartment(email string) [2]string {
+	db := Connect()
+	var Email, Department string
+	q := "SELECT emails, departments FROM Departments WHERE emails=?"
+	if err := db.QueryRow(q, email).Scan(&Email, &Department); err != nil {
+		return [2]string{}
+	}
+	credentials := [2]string{Email, Department}
+	return credentials
+}
+
+func FindRole(email string) [2]string {
+	db := Connect()
+	var Email, Role string
+	q := "SELECT emails, roles FROM Roles WHERE emails=?"
+	if err := db.QueryRow(q, email).Scan(&Email, &Role); err != nil {
+		return [2]string{}
+	}
+	credentials := [2]string{Email, Role}
+	return credentials
+}
