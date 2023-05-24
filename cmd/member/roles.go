@@ -14,7 +14,7 @@ import (
 // rolesCmd represents the roles command
 var rolesCmd = &cobra.Command{
 	Use:   "roles",
-	Short: "A brief description of your command",
+	Short: "Setup the role of a user",
 	Run: func(cmd *cobra.Command, args []string) {
 		role, _ := cmd.Flags().GetString("role")
 

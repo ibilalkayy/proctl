@@ -14,7 +14,7 @@ import (
 // depsCmd represents the deps command
 var depsCmd = &cobra.Command{
 	Use:   "deps",
-	Short: "A brief description of your command",
+	Short: "Setup the department of a user",
 	Run: func(cmd *cobra.Command, args []string) {
 		department, _ := cmd.Flags().GetString("department")
 

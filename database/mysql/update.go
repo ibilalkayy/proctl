@@ -171,3 +171,35 @@ func UpdateMember(value [8]string, email, password string, isSet bool) {
 	_, err = update.Exec(updateValues...)
 	middleware.HandleError(err)
 }
+
+func UpdateDepartment(email, dep string) {
+	db := Connect()
+	q := "UPDATE Departments SET departments=? WHERE emails=?"
+	update, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer update.Close()
+
+	if len(email) != 0 && len(dep) != 0 {
+		_, err = update.Exec(dep, email)
+		middleware.HandleError(err)
+	} else {
+		fmt.Println(errors.New("More flags are required to update the department"))
+	}
+}
+
+func UpdateRole(email, role string) {
+	db := Connect()
+	q := "UPDATE Roles SET roles=? WHERE emails=?"
+	update, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer update.Close()
+
+	if len(email) != 0 && len(role) != 0 {
+		_, err = update.Exec(role, email)
+		middleware.HandleError(err)
+	} else {
+		fmt.Println(errors.New("More flags are required to update the role"))
+	}
+}
