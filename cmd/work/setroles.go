@@ -1,4 +1,4 @@
-package member
+package work
 
 import (
 	"errors"
@@ -11,9 +11,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rolesCmd represents the roles command
-var rolesCmd = &cobra.Command{
-	Use:   "roles",
+// setrolesCmd represents the setroles command
+var setrolesCmd = &cobra.Command{
+	Use:   "setroles",
 	Short: "Setup the role of a user",
 	Run: func(cmd *cobra.Command, args []string) {
 		role, _ := cmd.Flags().GetString("role")
@@ -52,6 +52,6 @@ var rolesCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(rolesCmd)
-	rolesCmd.Flags().StringP("role", "r", "", "Specify the role to setup")
+	cmd.RootCmd.AddCommand(setrolesCmd)
+	setrolesCmd.Flags().StringP("role", "r", "", "Specify the role to setup")
 }

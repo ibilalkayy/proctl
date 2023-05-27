@@ -34,8 +34,7 @@ var loginCmd = &cobra.Command{
 
 		if len(loginToken) != 0 || len(memberLoginToken) != 0 {
 			fmt.Println(errors.New("You're already logged in."))
-		}
-		if MemberLogin(loginEmail, loginPassword) {
+		} else if MemberLogin(loginEmail, loginPassword) {
 			fmt.Println("You're successfully logged in.")
 		} else if UserLogin(loginEmail, loginPassword) {
 			fmt.Println("You're successfully logged in.")

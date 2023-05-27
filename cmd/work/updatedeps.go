@@ -1,4 +1,4 @@
-package member
+package work
 
 import (
 	"errors"
@@ -11,12 +11,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// updaterolesCmd represents the updateroles command
-var updaterolesCmd = &cobra.Command{
-	Use:   "updateroles",
+// updatedepsCmd represents the updatedeps command
+var updatedepsCmd = &cobra.Command{
+	Use:   "updatedeps",
 	Short: "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		role, _ := cmd.Flags().GetString("role")
+		department, _ := cmd.Flags().GetString("department")
 
 		accountEmail := redis.GetAccountInfo("AccountEmail")
 		loginToken := redis.GetAccountInfo("LoginToken")
@@ -24,28 +24,28 @@ var updaterolesCmd = &cobra.Command{
 		memberAccountEmail := redis.GetAccountInfo("MemberAccountEmail")
 		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 
-		userCredentials := mysql.FindRole(accountEmail)
-		memberCredentials := mysql.FindRole(memberAccountEmail)
+		userCredentials := mysql.FindDepartment(accountEmail)
+		memberCredentials := mysql.FindDepartment(memberAccountEmail)
 
 		if len(loginToken) != 0 && jwt.RefreshToken("user") || len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
 			if len(userCredentials[0]) != 0 && len(userCredentials[1]) != 0 {
-				mysql.UpdateRole(accountEmail, role)
-				fmt.Println("Your have successfully updated the role")
+				mysql.UpdateDepartment(accountEmail, department)
+				fmt.Println("Your have successfully updated the department")
 				return
 			} else if len(memberCredentials[0]) != 0 && len(memberCredentials[1]) != 0 {
-				mysql.UpdateRole(memberAccountEmail, role)
-				fmt.Println("Your have successfully updated the role")
+				mysql.UpdateDepartment(memberAccountEmail, department)
+				fmt.Println("Your have successfully updated the department")
 				return
 			} else {
-				fmt.Println(errors.New("You have not inserted the role. How you can update it?"))
+				fmt.Println(errors.New("You have not inserted the department. How you can update it?"))
 			}
 		} else {
-			fmt.Println(errors.New("First login to update the role"))
+			fmt.Println(errors.New("First login to update the department"))
 		}
 	},
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(updaterolesCmd)
-	updaterolesCmd.Flags().StringP("role", "r", "", "Specify the role to update")
+	cmd.RootCmd.AddCommand(updatedepsCmd)
+	updatedepsCmd.Flags().StringP("department", "d", "", "Specify the department to update")
 }

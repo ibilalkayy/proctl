@@ -1,4 +1,4 @@
-package member
+package work
 
 import (
 	"errors"
@@ -11,9 +11,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// depsCmd represents the deps command
-var depsCmd = &cobra.Command{
-	Use:   "deps",
+// setdepsCmd represents the setdeps command
+var setdepsCmd = &cobra.Command{
+	Use:   "setdeps",
 	Short: "Setup the department of a user",
 	Run: func(cmd *cobra.Command, args []string) {
 		department, _ := cmd.Flags().GetString("department")
@@ -52,6 +52,6 @@ var depsCmd = &cobra.Command{
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(depsCmd)
-	depsCmd.Flags().StringP("department", "d", "", "Specify the department to setup")
+	cmd.RootCmd.AddCommand(setdepsCmd)
+	setdepsCmd.Flags().StringP("department", "d", "", "Specify the department to setup")
 }
