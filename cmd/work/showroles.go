@@ -1,4 +1,4 @@
-package member
+package work
 
 import (
 	"errors"
@@ -10,16 +10,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// showdepsCmd represents the showdeps command
-var showdepsCmd = &cobra.Command{
-	Use:   "showdeps",
-	Short: "Show the deparments of a member and the admin",
+// showrolesCmd represents the showroles command
+var showrolesCmd = &cobra.Command{
+	Use:   "showroles",
+	Short: "Show the roles of a member and the admin",
 	Run: func(cmd *cobra.Command, args []string) {
 		loginToken := redis.GetAccountInfo("LoginToken")
 		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 		if (len(loginToken) != 0 && jwt.RefreshToken("user")) || (len(memberLoginToken) != 0 && jwt.RefreshToken("member")) {
-			roles := [12]string{" Sales & CRM", " Legal", " HR & Recruiting", " Marketing", " Software Development", " Finance", " Education", " Operations", " Product Management", "Construction", "Nonprofits", "IT"}
-			fmt.Println("Following are the departments")
+			roles := [4]string{"Business Owner", "Team Leader", "Team Member", "Freelancer"}
+			fmt.Println("Following are the roles")
 
 			index := 1
 			for _, value := range roles {
@@ -27,11 +27,11 @@ var showdepsCmd = &cobra.Command{
 				index++
 			}
 		} else {
-			fmt.Println(errors.New("First login to show the departments of a member"))
+			fmt.Println(errors.New("First login to show the roles of a member"))
 		}
 	},
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(showdepsCmd)
+	cmd.RootCmd.AddCommand(showrolesCmd)
 }
