@@ -27,26 +27,26 @@ var setrolesCmd = &cobra.Command{
 		userCredentials := mysql.FindRole(accountEmail)
 		memberCredentials := mysql.FindRole(memberAccountEmail)
 
-		if len(userCredentials[0]) == 0 && len(userCredentials[1]) == 0 {
-			if len(loginToken) != 0 && jwt.RefreshToken("user") {
+		if len(loginToken) != 0 && jwt.RefreshToken("user") {
+			if len(userCredentials[0]) == 0 && len(userCredentials[1]) == 0 {
 				redis.DelToken("MemberLoginToken")
 				mysql.InsertRole(accountEmail, role)
 				fmt.Println("Your have successfully inserted the role")
 				return
+			} else {
+				fmt.Println(errors.New("You have already inserted the role. Please update it"))
 			}
-		} else {
-			fmt.Println(errors.New("You have already inserted the role. Please update it"))
-		}
-
-		if len(memberCredentials[0]) == 0 && len(memberCredentials[1]) == 0 {
-			if len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
+		} else if len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
+			if len(memberCredentials[0]) == 0 && len(memberCredentials[1]) == 0 {
 				redis.DelToken("LoginToken")
 				mysql.InsertRole(memberAccountEmail, role)
 				fmt.Println("Your have successfully inserted the role")
 				return
+			} else {
+				fmt.Println(errors.New("You have already inserted the role. Please update it"))
 			}
 		} else {
-			fmt.Println(errors.New("You have already inserted the role. Please update it"))
+			fmt.Println(errors.New("First login to setup the role"))
 		}
 	},
 }
