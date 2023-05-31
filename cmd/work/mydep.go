@@ -14,7 +14,7 @@ import (
 // mydepCmd represents the mydep command
 var mydepCmd = &cobra.Command{
 	Use:   "mydep",
-	Short: "A brief description of your command",
+	Short: "Show you the department",
 	Run: func(cmd *cobra.Command, args []string) {
 		accountEmail := redis.GetAccountInfo("AccountEmail")
 		loginToken := redis.GetAccountInfo("LoginToken")
@@ -27,17 +27,17 @@ var mydepCmd = &cobra.Command{
 
 		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			if len(userCredentials[0]) != 0 && len(userCredentials[1]) != 0 {
-				fmt.Println("user department")
+				fmt.Printf("My department: %s\n", userCredentials[1])
 				return
 			} else {
-				fmt.Println(errors.New("not a user department"))
+				fmt.Println(errors.New("This user has no department"))
 			}
 		} else if len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
 			if len(memberCredentials[0]) != 0 && len(memberCredentials[1]) != 0 {
-				fmt.Println("member department")
+				fmt.Printf("My department: %s\n", memberCredentials[1])
 				return
 			} else {
-				fmt.Println(errors.New("not a member department"))
+				fmt.Println(errors.New("This member has no department"))
 			}
 		} else {
 			fmt.Println(errors.New("First login to show you the department"))

@@ -14,7 +14,7 @@ import (
 // myroleCmd represents the myrole command
 var myroleCmd = &cobra.Command{
 	Use:   "myrole",
-	Short: "A brief description of your command",
+	Short: "Show you the role",
 	Run: func(cmd *cobra.Command, args []string) {
 		accountEmail := redis.GetAccountInfo("AccountEmail")
 		loginToken := redis.GetAccountInfo("LoginToken")
@@ -27,20 +27,20 @@ var myroleCmd = &cobra.Command{
 
 		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			if len(userCredentials[0]) != 0 && len(userCredentials[1]) != 0 {
-				fmt.Println("user role")
+				fmt.Printf("My role: %s\n", userCredentials[1])
 				return
 			} else {
-				fmt.Println(errors.New("not a user role"))
+				fmt.Println(errors.New("This user has no role"))
 			}
 		} else if len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
 			if len(memberCredentials[0]) != 0 && len(memberCredentials[1]) != 0 {
-				fmt.Println("member role")
+				fmt.Printf("My role: %s\n", memberCredentials[1])
 				return
 			} else {
 				fmt.Println(errors.New("not a member role"))
 			}
 		} else {
-			fmt.Println(errors.New("First login to show you the role"))
+			fmt.Println(errors.New("This member has no role"))
 		}
 	},
 }
