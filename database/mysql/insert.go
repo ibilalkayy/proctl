@@ -111,3 +111,17 @@ func InsertRole(email, role string) {
 		middleware.HandleError(err)
 	}
 }
+
+func InsertBoard(email, board string) {
+	db := CreateTable(6)
+	q := "INSERT INTO Boards(emails, boards) VALUES(?, ?)"
+	insert, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer insert.Close()
+
+	if len(email) != 0 {
+		_, err := insert.Exec(email, board)
+		middleware.HandleError(err)
+	}
+}

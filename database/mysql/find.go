@@ -162,3 +162,13 @@ func FindRole(email string) [2]string {
 	credentials := [2]string{Email, Role}
 	return credentials
 }
+
+func FindBoard(email, board string) string {
+	db := Connect()
+	var Board string
+	q := "SELECT boards FROM Boards WHERE emails=? AND boards=?"
+	if err := db.QueryRow(q, email, board).Scan(&Board); err != nil {
+		return ""
+	}
+	return Board
+}
