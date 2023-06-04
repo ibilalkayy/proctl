@@ -22,3 +22,19 @@ func DeleteWorkspace(value [2]string) {
 		fmt.Println(errors.New("Flags are required to delete the workspace"))
 	}
 }
+
+func DeleteBoard(email, board string) {
+	db := Connect()
+	q := "DELETE FROM Boards WHERE emails=? AND boards=?"
+	delete, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer delete.Close()
+
+	if len(email) != 0 && len(board) != 0 {
+		_, err = delete.Exec(email, board)
+		middleware.HandleError(err)
+	} else {
+		fmt.Println(errors.New("Flags are required to delete the board"))
+	}
+}

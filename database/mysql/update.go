@@ -203,3 +203,19 @@ func UpdateRole(email, role string) {
 		fmt.Println(errors.New("More flags are required to update the role"))
 	}
 }
+
+func UpdateBoard(email, oldBoard, newBoard string) {
+	db := Connect()
+	q := "UPDATE Boards SET boards=? WHERE emails=? AND boards=?"
+	update, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer update.Close()
+
+	if len(email) != 0 && len(oldBoard) != 0 && len(newBoard) != 0 {
+		_, err = update.Exec(newBoard, email, oldBoard)
+		middleware.HandleError(err)
+	} else {
+		fmt.Println(errors.New("More flags are required to update the board"))
+	}
+}
