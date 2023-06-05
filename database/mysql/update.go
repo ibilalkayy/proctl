@@ -9,14 +9,17 @@ import (
 	"github.com/ibilalkayy/proctl/middleware"
 )
 
+// UpdateUser updates user information in the Signup table
 func UpdateUser(value [4]string, email, password string) {
 	db := Connect()
 	defer db.Close()
 
+	// Update AccountFullName in Redis if provided
 	if len(value[0]) != 0 {
 		redis.SetAccountInfo("AccountFullName", value[0])
 	}
 
+	// Update AccountName in Redis if provided
 	if len(value[1]) != 0 {
 		redis.SetAccountInfo("AccountName", value[1])
 	}
@@ -32,6 +35,7 @@ func UpdateUser(value [4]string, email, password string) {
 		hashPass = redis.GetAccountInfo("AccountPassword")
 	}
 
+	// Update user information in the Signup table
 	q := "UPDATE Signup SET fullnames=?, accountnames=?, passwords=?, is_active=? WHERE emails=? AND passwords=?"
 	_, err := db.Exec(q, redis.GetAccountInfo("AccountFullName"), redis.GetAccountInfo("AccountName"), hashPass, value[3], email, password)
 	middleware.HandleError(err)
@@ -39,6 +43,7 @@ func UpdateUser(value [4]string, email, password string) {
 	redis.DelToken("LoginToken")
 }
 
+// UpdateProfile updates profile information in the Profiles table
 func UpdateProfile(value [4]string, email string) {
 	if len(value) == 0 && len(email) == 0 {
 		return
@@ -77,6 +82,7 @@ func UpdateProfile(value [4]string, email string) {
 	middleware.HandleError(err)
 }
 
+// UpdateWorkspace updates workspace information in the Workspaces table
 func UpdateWorkspace(value [3]string) {
 	db := Connect()
 	q := "UPDATE Workspaces SET names=? WHERE emails=? AND names=?"
@@ -93,6 +99,7 @@ func UpdateWorkspace(value [3]string) {
 	}
 }
 
+// UpdateMember updates member information in the Members table
 func UpdateMember(value [8]string, email, password string, isSet bool) {
 	if len(value) == 0 && len(email) == 0 && (len(password) == 0 || isSet) {
 		return
@@ -172,6 +179,7 @@ func UpdateMember(value [8]string, email, password string, isSet bool) {
 	middleware.HandleError(err)
 }
 
+// UpdateDepartment updates department information in the Departments table
 func UpdateDepartment(email, dep string) {
 	db := Connect()
 	q := "UPDATE Departments SET departments=? WHERE emails=?"
@@ -188,6 +196,7 @@ func UpdateDepartment(email, dep string) {
 	}
 }
 
+// UpdateRole updates role information in the Roles table
 func UpdateRole(email, role string) {
 	db := Connect()
 	q := "UPDATE Roles SET roles=? WHERE emails=?"
@@ -204,6 +213,7 @@ func UpdateRole(email, role string) {
 	}
 }
 
+// UpdateBoard updates board information in the Boards table
 func UpdateBoard(email, oldBoard, newBoard string) {
 	db := Connect()
 	q := "UPDATE Boards SET boards=? WHERE emails=? AND boards=?"
