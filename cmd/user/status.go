@@ -14,6 +14,7 @@ var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Status of the logged in or the logged out user.",
 	Run: func(cmd *cobra.Command, args []string) {
+		// Check if a login token exists for the user
 		loginToken := redis.GetAccountInfo("LoginToken")
 		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			redis.DelToken("MemberLoginToken")
@@ -22,6 +23,7 @@ var statusCmd = &cobra.Command{
 			return
 		}
 
+		// Check if a login token exists for the member
 		memberLoginToken := redis.GetAccountInfo("MemberLoginToken")
 		if len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
 			redis.DelToken("LoginToken")
@@ -30,6 +32,7 @@ var statusCmd = &cobra.Command{
 			return
 		}
 
+		// If no login token exists, the user is logged out
 		fmt.Println("User is logged out.")
 	},
 }
