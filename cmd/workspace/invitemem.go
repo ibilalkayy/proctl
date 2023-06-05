@@ -31,13 +31,17 @@ var invitememCmd = &cobra.Command{
 
 		if len(loginToken) != 0 && jwt.RefreshToken("user") {
 			if len(workspaceName) != 0 {
+				// Prepare values for the email invitation
 				values := [5]string{"member-template", accountName, getVerificationCode, inviteWorkspaceEmail, accountName + " has invited you to collaborate on the proctl project"}
+				// Send the invitation email
 				email.Verify(values)
 				fmt.Println("You have successfully invited a member")
 			} else {
+				// If no workspace exists, print an error message
 				fmt.Println(errors.New("Please create a workspace first"))
 			}
 		} else {
+			// If the user is not logged in, print an error message
 			fmt.Println(errors.New("First login to invite a member"))
 		}
 	},
@@ -45,5 +49,6 @@ var invitememCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(invitememCmd)
+	// Add a command-line flag to specify the email address to invite
 	invitememCmd.Flags().StringP("email", "e", "", "Specify an email address to invite people")
 }
