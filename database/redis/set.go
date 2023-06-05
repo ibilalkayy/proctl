@@ -12,6 +12,7 @@ type MyInfo struct {
 	MyKey string
 }
 
+// RedisConnect establishes a connection to Redis and returns a Redis client
 func RedisConnect() *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -22,6 +23,7 @@ func RedisConnect() *redis.Client {
 	return client
 }
 
+// SetUserCredentials stores user credentials in Redis
 func SetUserCredentials(value [4]string) {
 	client := RedisConnect()
 	insertEmails, err := client.LPush("UserEmails", value[0]).Result()
@@ -37,6 +39,7 @@ func SetUserCredentials(value [4]string) {
 	}
 }
 
+// SetMemberCredentials stores member credentials in Redis
 func SetMemberCredentials(value [3]string) {
 	client := RedisConnect()
 	insertEmails, err := client.LPush("MemberEmails", value[0]).Result()
@@ -50,6 +53,7 @@ func SetMemberCredentials(value [3]string) {
 	}
 }
 
+// SetAccountInfo stores account information in Redis for the given ID
 func SetAccountInfo(id, MyValue string) {
 	client := RedisConnect()
 	json, err := json.Marshal(MyInfo{MyKey: MyValue})
