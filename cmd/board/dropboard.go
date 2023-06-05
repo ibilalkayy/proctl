@@ -18,6 +18,7 @@ import (
 var dropboardCmd = &cobra.Command{
 	Use:   "dropboard",        // This is the command name.
 	Short: "Delete the board", // A short description of the command.
+
 	// This function is run when the command is called.
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get board name flag

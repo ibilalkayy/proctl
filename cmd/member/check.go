@@ -18,6 +18,7 @@ import (
 var checkCmd = &cobra.Command{
 	Use:   "check",                              // This is the command name.
 	Short: "Check the invitation of the member", // A short description of the command.
+
 	// This function is run when the command is called.
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get email flag.

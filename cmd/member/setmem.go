@@ -19,6 +19,7 @@ import (
 var setmemCmd = &cobra.Command{
 	Use:   "setmem",                       // This is the command name.
 	Short: "Setup the member credentials", // A short description of the command.
+
 	// This function is run when the command is called.
 	Run: func(cmd *cobra.Command, args []string) {
 		// Get the values of the flags (email, password, full name, account name).

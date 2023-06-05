@@ -18,6 +18,7 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",                                   // This is the command name.
 	Short: "Add the profile information of a user", // A short description of the command.
+
 	Run: func(cmd *cobra.Command, args []string) { // This function is run when the command is called.
 		// Get the values of the flags (title, phone, location, working status).
 		profileTitle, _ := cmd.Flags().GetString("title")

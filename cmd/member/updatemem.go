@@ -16,6 +16,7 @@ import (
 var updatememCmd = &cobra.Command{
 	Use:   "updatemem",                     // This is the command name.
 	Short: "Update the member credentials", // A short description of the command.
+
 	// This function is run when the command is called.
 	Run: func(cmd *cobra.Command, args []string) {
 		memberEmail, _ := cmd.Flags().GetString("email")
