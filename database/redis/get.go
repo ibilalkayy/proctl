@@ -1,9 +1,8 @@
 package redis
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
+// GetUserCredentials retrieves user credentials from Redis
 func GetUserCredentials(totalColumns int) ([]string, []string, []string, []string, bool) {
 	client := RedisConnect()
 	getEmails, err := client.LRange("UserEmails", 0, int64(totalColumns)-1).Result()
@@ -18,6 +17,7 @@ func GetUserCredentials(totalColumns int) ([]string, []string, []string, []strin
 	return getEmails, getPasswords, getFullName, getAccountName, true
 }
 
+// GetMemberCredentials retrieves member credentials from Redis
 func GetMemberCredentials(totalColumns int) ([]string, []string, []string, bool) {
 	client := RedisConnect()
 	getEmails, err := client.LRange("MemberEmails", 0, int64(totalColumns)-1).Result()
@@ -31,6 +31,7 @@ func GetMemberCredentials(totalColumns int) ([]string, []string, []string, bool)
 	return getEmails, getPasswords, getAccountName, true
 }
 
+// GetAccountInfo retrieves account information from Redis for the given ID
 func GetAccountInfo(id string) string {
 	client := RedisConnect()
 	val, err := client.Get(id).Result()
