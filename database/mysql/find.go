@@ -24,6 +24,8 @@ type ProfileCredentials struct {
 	Working_status string
 }
 
+// FindAccount finds an account with the given email and password.
+// It returns the email, password, status, and a boolean indicating if the account was found.
 func FindAccount(email, password string) (string, string, string, bool) {
 	db := Connect()
 	var uc UserCredentials
@@ -35,6 +37,8 @@ func FindAccount(email, password string) (string, string, string, bool) {
 	return uc.Email, uc.Password, uc.Status, true
 }
 
+// FindProfile checks if a profile exists for the given email.
+// It returns a boolean indicating if the profile exists.
 func FindProfile(email string) bool {
 	db := Connect()
 	var pc ProfileCredentials
@@ -45,6 +49,7 @@ func FindProfile(email string) bool {
 	return true
 }
 
+// queryUser performs a database query and returns user credentials.
 func queryUser(db *sql.DB, q string, args ...interface{}) UserCredentials {
 	var uc UserCredentials
 	row := db.QueryRow(q, args...)
@@ -56,6 +61,7 @@ func queryUser(db *sql.DB, q string, args ...interface{}) UserCredentials {
 	return uc
 }
 
+// queryProfile performs a database query and returns profile credentials.
 func queryProfile(db *sql.DB, q string, args ...interface{}) ProfileCredentials {
 	var pc ProfileCredentials
 	row := db.QueryRow(q, args...)
@@ -67,6 +73,8 @@ func queryProfile(db *sql.DB, q string, args ...interface{}) ProfileCredentials 
 	return pc
 }
 
+// ListUserInfo lists user information for the given email and password.
+// It returns an empty string.
 func ListUserInfo(email, password string) string {
 	db := Connect()
 	q := "SELECT emails, fullnames, accountnames FROM Signup WHERE emails=? AND passwords=?"
@@ -75,6 +83,8 @@ func ListUserInfo(email, password string) string {
 	return ""
 }
 
+// ListProfileInfo lists profile information for the given email.
+// It returns an empty string.
 func ListProfileInfo(email string) string {
 	db := Connect()
 	q := "SELECT titles, phones, locations FROM Profiles WHERE emails=?"
@@ -83,6 +93,8 @@ func ListProfileInfo(email string) string {
 	return ""
 }
 
+// FindWorkspace finds workspaces associated with the given email.
+// It returns a string containing the list of workspace names.
 func FindWorkspace(email string) string {
 	db := Connect()
 	q := "SELECT names FROM Workspaces WHERE emails=?"
@@ -107,6 +119,8 @@ func FindWorkspace(email string) string {
 	}
 }
 
+// FindWorkspaceName finds the workspace with the given email and name.
+// It returns the workspace name if found, otherwise an empty string.
 func FindWorkspaceName(email, name string) string {
 	db := Connect()
 	var Name string
@@ -117,6 +131,8 @@ func FindWorkspaceName(email, name string) string {
 	return Name
 }
 
+// FindMember finds a member with the given email and password.
+// It returns member credentials and a boolean indicating if the member was found.
 func FindMember(email, password string) ([4]string, bool) {
 	db := Connect()
 	var uc UserCredentials
@@ -141,6 +157,8 @@ func FindMember(email, password string) ([4]string, bool) {
 	return memberCredentials, true
 }
 
+// FindDepartment finds the department associated with the given email.
+// It returns the email and department as a string array.
 func FindDepartment(email string) [2]string {
 	db := Connect()
 	var Email, Department string
@@ -152,6 +170,8 @@ func FindDepartment(email string) [2]string {
 	return credentials
 }
 
+// FindRole finds the role associated with the given email.
+// It returns the email and role as a string array.
 func FindRole(email string) [2]string {
 	db := Connect()
 	var Email, Role string
@@ -163,6 +183,8 @@ func FindRole(email string) [2]string {
 	return credentials
 }
 
+// FindBoard finds a board with the given email and board name.
+// It returns the board name if found, otherwise an empty string.
 func FindBoard(email, board string) string {
 	db := Connect()
 	var Board string
