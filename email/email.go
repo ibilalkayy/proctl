@@ -16,8 +16,11 @@ type AccountInfo struct {
 	GetEncodedText string
 }
 
+// Verify sends a verification email
 func Verify(values [5]string) {
 	mail := gomail.NewMessage()
+
+	// Load email credentials from environment variables
 	myEmail := middleware.LoadEnvVariable("APP_EMAIL")
 	myPassword := middleware.LoadEnvVariable("APP_PASSWORD")
 
@@ -27,6 +30,7 @@ func Verify(values [5]string) {
 		log.Fatal(err)
 	}
 
+	// Create an AccountInfo struct to pass to the email template
 	getAccountName := AccountInfo{
 		GetAccountName: values[1],
 		GetEncodedText: values[2],
@@ -36,13 +40,17 @@ func Verify(values [5]string) {
 		fmt.Println(errors.New("Cannot load the template"))
 	}
 
+	// Set email headers and content
 	mail.SetHeader("From", myEmail)
 	mail.SetHeader("To", values[3])
 	mail.SetHeader("Reply-To", myEmail)
 	mail.SetHeader("Subject", values[4])
 	mail.SetBody("text/html", body.String())
-	a := gomail.NewDialer("smtp.gmail.com", 587, myEmail, myPassword)
-	if err := a.DialAndSend(mail); err != nil {
+
+	// Create a new SMTP dialer using the email credentials
+	// and send the email
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, myEmail, myPassword)
+	if err := dialer.DialAndSend(mail); err != nil {
 		log.Fatal(err)
 	}
 }
