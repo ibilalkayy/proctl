@@ -3,7 +3,6 @@ package main
 
 // Import necessary packages and libraries.
 import (
-	// This imports the cmd package from the github.com/ibilalkayy/proctl repository.
 	"github.com/ibilalkayy/proctl/cmd"
 
 	// The following import statements import specific commands from the proctl tool.
