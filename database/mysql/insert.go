@@ -132,3 +132,17 @@ func InsertBoard(email, board string) {
 		middleware.HandleError(err)
 	}
 }
+
+func InsertProject(email, board, project, person, status, date string) {
+	db := CreateTable(7)
+	q := "INSERT INTO Projects(emails, boards, projects, persons, statuses, dates) VALUES(?, ?, ?, ?, ?, ?)"
+	insert, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer insert.Close()
+
+	if len(email) != 0 && len(board) != 0 && len(project) != 0 {
+		_, err := insert.Exec(email, board, project, person, status, date)
+		middleware.HandleError(err)
+	}
+}

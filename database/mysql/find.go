@@ -194,3 +194,13 @@ func FindBoard(email, board string) string {
 	}
 	return Board
 }
+
+func FindProject(email, board, project string) string {
+	db := Connect()
+	var Project string
+	q := "SELECT projects FROM Projects WHERE emails=?, boards=? AND projects=?"
+	if err := db.QueryRow(q, email, board, project).Scan(&Project); err != nil {
+		return ""
+	}
+	return Project
+}
