@@ -196,11 +196,15 @@ func FindBoard(email, board string) string {
 }
 
 func FindProject(email, board, project string) string {
-	db := Connect()
+	db := CreateTable(7)
 	var Project string
-	q := "SELECT projects FROM Projects WHERE emails=?, boards=? AND projects=?"
+	q := "SELECT projects FROM Projects WHERE emails=? AND boards=? AND projects=?"
 	if err := db.QueryRow(q, email, board, project).Scan(&Project); err != nil {
-		return ""
+		if err == sql.ErrNoRows {
+			return ""
+		} else {
+			return ""
+		}
 	}
 	return Project
 }

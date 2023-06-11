@@ -31,17 +31,31 @@ var addproCmd = &cobra.Command{
 		userProject := mysql.FindProject(accountEmail, boardName, projectName)
 		memberProject := mysql.FindProject(memberAccountEmail, boardName, projectName)
 
+		userBoard := mysql.FindBoard(accountEmail, boardName)
+		memberBoard := mysql.FindBoard(memberAccountEmail, boardName)
+
+		accountName := redis.GetAccountInfo("AccountName")
+		memberAccountName := redis.GetAccountInfo("MemberAccountName")
+
 		if len(loginToken) != 0 && jwt.RefreshToken("user") {
-			if len(userProject) == 0 && userProject != projectName {
-				mysql.InsertProject(accountEmail, boardName, projectName, personName, status, date)
-				fmt.Println("The project is successfully inserted")
+			if len(userProject) == 0 {
+				if userBoard == boardName && accountName == personName {
+					mysql.InsertProject(accountEmail, boardName, projectName, personName, status, date)
+					fmt.Println("The project is successfully inserted")
+				} else {
+					fmt.Println(errors.New("The board name or the person name is wrong"))
+				}
 			} else {
 				fmt.Println(errors.New("The project by this name is already present"))
 			}
 		} else if len(memberLoginToken) != 0 && jwt.RefreshToken("member") {
-			if len(memberProject) == 0 && memberProject != projectName {
-				mysql.InsertProject(memberAccountEmail, boardName, projectName, personName, status, date)
-				fmt.Println("The project is successfully inserted")
+			if len(memberProject) == 0 {
+				if memberBoard == boardName && memberAccountName == personName {
+					mysql.InsertProject(memberAccountEmail, boardName, projectName, personName, status, date)
+					fmt.Println("The project is successfully inserted")
+				} else {
+					fmt.Println(errors.New("The board name or the person name is wrong"))
+				}
 			} else {
 				fmt.Println(errors.New("The project by this name is already present"))
 			}
