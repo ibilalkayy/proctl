@@ -229,3 +229,39 @@ func UpdateBoard(email, oldBoard, newBoard string) {
 		fmt.Println(errors.New("More flags are required to update the board"))
 	}
 }
+
+func UpdateProject(value [3]string, boardName, projectName string) {
+	if len(value) == 0 && len(boardName) == 0 && len(projectName) == 0 {
+		return
+	}
+
+	db := Connect()
+	q := "UPDATE Projects SET "
+	var updateValues []interface{}
+
+	for i := 0; i < len(value); i++ {
+		if len(value[i]) != 0 {
+			switch i {
+			case 0:
+				q += "projects=?, "
+			case 1:
+				q += "statuses=?, "
+			case 2:
+				q += "dates=?, "
+			}
+			updateValues = append(updateValues, value[i])
+		}
+	}
+
+	q = strings.TrimSuffix(q, ", ")
+	q += " WHERE boards=? AND projects=?"
+	updateValues = append(updateValues, boardName, projectName)
+
+	update, err := db.Prepare(q)
+	middleware.HandleError(err)
+
+	defer update.Close()
+
+	_, err = update.Exec(updateValues...)
+	middleware.HandleError(err)
+}
