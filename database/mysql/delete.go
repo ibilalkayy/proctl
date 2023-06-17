@@ -41,7 +41,7 @@ func DeleteBoard(email, board string) {
 
 func DeleteProject(email, board, project string) {
 	db := Connect()                                                        // Connect to the MySQL database
-	q := "DELETE FROM Projects WHERE emails=? AND boards=? AND projects=?" // SQL query to delete a board
+	q := "DELETE FROM Projects WHERE emails=? AND boards=? AND projects=?" // SQL query to delete a project
 	delete, err := db.Prepare(q)                                           // Prepare the SQL statement
 	middleware.HandleError(err)                                            // Handle any errors that occur
 
