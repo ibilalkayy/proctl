@@ -51,6 +51,6 @@ func DeleteProject(email, board, project string) {
 		_, err = delete.Exec(email, board, project) // Execute the prepared statement with the provided values
 		middleware.HandleError(err)                 // Handle any errors that occur during execution
 	} else {
-		fmt.Println(errors.New("Flags are required to delete the project"))
+		fmt.Println(errors.New("Flags are required to delete the project")) // Print an error message if required values are missing
 	}
 }
