@@ -60,7 +60,7 @@ var checkCmd = &cobra.Command{
 
 // init is a special Go function that is automatically executed at the start of the program.
 func init() {
-	// This function adds checkCmd to the list of commands in the root command.
+	// This function adds checkCmd to the list of commands in the root command
 	cmd.RootCmd.AddCommand(checkCmd)
 
 	// This function adds a flag to checkCmd for specifying the email.
