@@ -22,6 +22,26 @@ To run Proctl, simply run the following command:
 
 `go run main.go`
 
+**Note:** After signing up in the account, if you logout and login again, it will give you an error that the `proctl.Members` table does not exist.
+
+Please make sure to create the Members table in MySQL database by copying this code.
+
+    CREATE TABLE IF NOT EXISTS Members (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        emails VARCHAR(255) NOT NULL,
+        passwords VARCHAR(255) NOT NULL,
+        fullnames VARCHAR(255) NOT NULL,
+        accountnames VARCHAR(255) NOT NULL,
+        titles VARCHAR(255) NOT NULL,
+        phones VARCHAR(255) NOT NULL,
+        locations VARCHAR(255) NOT NULL,
+        working_statuses VARCHAR(255) NOT NULL,
+        is_active TINYINT NOT NULL,
+        created_at DATETIME NOT NULL
+    );
+
+I will improve this code so that it is not used further.
+
 ## Configuration
 
 Proctl uses a configuration file to store your settings. By default, the configuration file is located in `$HOME/.proctl.yaml`. You can also specify a different config file using the `--config` flag.
