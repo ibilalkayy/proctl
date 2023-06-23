@@ -22,7 +22,9 @@ To run Proctl, simply run the following command:
 
 `go run main.go`
 
-**Note:** After signing up in the account, if you logout and login again, it will give you an error that the `proctl.Members` table does not exist.
+## **Note:** 
+
+After signing up in the account, if you logout and login again, it will give you an error that the `proctl.Members` table does not exist.
 
 Please make sure to create the Members table in MySQL database by copying this code.
 
