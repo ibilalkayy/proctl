@@ -42,7 +42,7 @@ Please make sure to create the Members table in MySQL database by copying this c
         created_at DATETIME NOT NULL
     );
 
-I will improve this code so that it is not used further.
+I'll improve this code so that it is not used further.
 
 ## Configuration
 
