@@ -230,7 +230,7 @@ func UpdateBoard(email, oldBoard, newBoard string) {
 	}
 }
 
-// UpdateProject updates the project information in the Projects table
+// UpdateProject updates the project information in the Projects table.
 func UpdateProject(value [3]string, boardName, projectName string) {
 	if len(value) == 0 && len(boardName) == 0 && len(projectName) == 0 {
 		return
