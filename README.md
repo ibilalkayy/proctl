@@ -16,6 +16,8 @@ Proctl, a project management software that utilizes the functionality of Monday.
 
 With Proctl, you can create workspaces, boards, projects and tasks, and arrange them according to your need. It is a simple and convenient way to manage your projects from the terminal.
 
+Here is the [playlist](https://www.youtube.com/playlist?list=PLptbpfKzsc3CIBK695oLKMlUdfMV21Ach) of this project in which the step by step videos are present.
+
 ## Usage
 
 To run Proctl, simply run the following command:
